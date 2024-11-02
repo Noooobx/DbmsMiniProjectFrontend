@@ -1,12 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LoginPageBG } from "../utils/constants";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -14,12 +15,14 @@ const Login = () => {
     console.log(email, password);
 
     try {
-      const response = await axios.post("http://localhost:3004/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:3004/login",
+        { email, password },
+        { withCredentials: true }
+      );
 
       console.log("Login successful!", response.data);
+      navigate("/dashboard");
     } catch (error) {
       if (error.response && error.response.data) {
         setError(
@@ -39,9 +42,10 @@ const Login = () => {
       }}
     >
       <div className="w-full max-w-md p-8 space-y-6 bg-white bg-opacity-90 rounded-lg shadow-lg">
-        <h2 className="text-3xl font-bold text-center text-purple-800">
+        <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
           Welcome Back!
         </h2>
+
         <p className="text-center text-lg text-gray-700">
           Please log in to your account.
         </p>
@@ -75,13 +79,13 @@ const Login = () => {
           </div>
           <button
             type="submit"
-            className="w-full px-4 py-2 font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-md shadow hover:bg-gradient-to-l transition duration-200"
+            className="w-full px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-md shadow hover:bg-gradient-to-l transition duration-200"
           >
             Log In
           </button>
         </form>
         <p className="text-sm text-center text-gray-600">
-          Dont have an account?{" "}
+          Don't have an account?{" "}
           <Link
             to="/signup"
             className="font-medium text-purple-600 hover:underline"
