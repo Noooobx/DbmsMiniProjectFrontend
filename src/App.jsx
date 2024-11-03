@@ -11,6 +11,7 @@ import Cart from "./Components/Cart";
 import { Provider } from "react-redux";
 import store from "./utils/store";
 import Checkout from "./Components/Checkout";
+import Profile from "./Components/Profile";
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
           <Route path="/orders" element={<Orders />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/profile" element={<Profile />} />
+
         </Routes>
       </Router>
     </Provider>

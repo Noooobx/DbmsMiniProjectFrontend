@@ -1,10 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie'; // Make sure to install this package
 
 const Header = () => {
   const navigate = useNavigate();
   const cartItemCount = useSelector((state) => state.cart.totalItemCount);
+
+  // Check if the user is logged in by checking a specific cookie
+  const isLoggedIn = !!Cookies.get('token'); // Replace 'user' with the actual cookie name used for authentication
 
   return (
     <header className="bg-gray-900 bg-opacity-75 shadow fixed top-0 left-0 w-full z-50">
@@ -30,7 +34,7 @@ const Header = () => {
             </a>
           </nav>
 
-          {/* Cart Icon and Login Button */}
+          {/* Cart Icon, User Icon, and Conditional Login/Dashboard Button */}
           <div className="flex items-center space-x-4">
             {/* Cart Icon with Count */}
             <button
@@ -58,13 +62,43 @@ const Header = () => {
               )}
             </button>
 
-            {/* Login Button */}
+            {/* User Icon */}
             <button
-              onClick={() => navigate('/login')}
-              className="px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"
+              onClick={() => navigate('/profile')}
+              className="flex items-center justify-center w-8 h-8 text-gray-300 hover:text-orange-500 transition duration-200"
             >
-              Login
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 14c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.33 0-10 1.67-10 5v2h20v-2c0-3.33-6.67-5-10-5z"
+                />
+              </svg>
             </button>
+
+            {/* Conditional Rendering for Login or Dashboard */}
+            {isLoggedIn ? (
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"
+              >
+                Dashboard
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate('/login')}
+                className="px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"
+              >
+                Login
+              </button>
+            )}
           </div>
         </div>
       </div>
