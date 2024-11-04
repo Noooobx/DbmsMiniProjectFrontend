@@ -1,42 +1,29 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LoginPageBG } from "../utils/constants";
+import { BASE_URL, LoginPageBG } from "../utils/constants";
 import Header from "./Header";
-import LoadingSpinner from './LoadingSpinner'; // Import the spinner component
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when login starts
-
-    console.log(email, password);
-
     try {
+      // Log the user in with the entered details.
       const response = await axios.post(
-        "http://localhost:3004/login",
+        BASE_URL + "/login",
         { email, password },
         { withCredentials: true }
       );
-
-      console.log("Login successful!", response.data);
+      console.log("Login successful!", response);
       navigate("/dashboard");
     } catch (error) {
-      if (error.response && error.response.data) {
-        setError(
-          error.response.data.message || "Login failed. Please try again."
-        );
-      } else {
-        setError("Login failed. Please try again.");
-      }
-    } finally {
-      setLoading(false); // Reset loading state when the request completes
+      console.log("Login failed.", error.response.data.message);
+      setError(error.response.data.message); // Set the error message from the server response
     }
   };
 
@@ -57,45 +44,47 @@ const Login = () => {
           <p className="text-center text-lg text-gray-700">
             Please log in to your account.
           </p>
-          {error && <div className="p-2 text-sm text-red-600">{error}</div>}
 
-          {loading ? ( // Show the spinner if loading
-            <LoadingSpinner />
-          ) : (
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  required
-                  placeholder="john.doe@example.com"
-                  className="mt-1 block w-full p-3 bg-white border border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="Enter your password"
-                  className="mt-1 block w-full p-3 bg-white border border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-md shadow hover:bg-gradient-to-l transition duration-200"
-              >
-                Log In
-              </button>
-            </form>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Email Address
+              </label>
+              <input
+                type="email"
+                required
+                placeholder="Email"
+                className="mt-1 block w-full p-3 bg-white border border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <input
+                type="password"
+                required
+                placeholder="Password"
+                className="mt-1 block w-full p-3 bg-white border border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-md shadow hover:bg-gradient-to-l transition duration-200"
+            >
+              Log In
+            </button>
+          </form>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 text-center text-red-600">
+              {error}
+            </div>
           )}
 
           <p className="text-sm text-center text-gray-600">
