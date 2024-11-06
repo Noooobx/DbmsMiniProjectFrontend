@@ -30,11 +30,11 @@ const Orders = () => {
       <div
         className="min-h-screen bg-cover bg-center"
         style={{
-          backgroundImage: `url('https://images.pexels.com/photos/1199795/pexels-photo-1199795.jpeg?cs=srgb&dl=pexels-pixabay-1199795.jpg&fm=jpg')`,
+          background: "linear-gradient(to right, #ff7e5f, #ffcc00)", // Bright gradient background
         }}
       >
         <div className="flex flex-col items-center justify-center min-h-screen bg-black bg-opacity-50 p-6">
-          <h1 className="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold text-center mb-6 bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
             Your Orders
           </h1>
           {error && (
@@ -53,23 +53,23 @@ const Orders = () => {
                     key={index} // Use index as key if no unique id is available
                     className="border-b border-gray-300 mb-4 pb-2"
                   >
-                    <p className="text-lg">
+                    <p className="text-lg font-semibold">
                       Order Date:{" "}
                       <strong>
                         {new Date(order.order_date).toLocaleDateString()}
                       </strong>
                     </p>
-                    <p>
+                    <p className="text-lg font-semibold">
                       Status:{" "}
                       <strong className="text-green-600">{order.status}</strong>
                     </p>
-                    <p>
+                    <p className="text-lg font-semibold">
                       Total Amount:{" "}
                       <strong>
                         ${parseFloat(order.total_amount).toFixed(2)}
                       </strong>
                     </p>
-                    <p>
+                    <p className="text-lg font-semibold">
                       Quantity: <strong>{order.quantity}</strong>
                     </p>
                   </div>

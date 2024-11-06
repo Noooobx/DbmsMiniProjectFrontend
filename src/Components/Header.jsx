@@ -7,11 +7,9 @@ const Header = () => {
   const navigate = useNavigate();
   const cartItemCount = useSelector((state) => state.cart.totalItemCount);
 
-  // Check if the user is logged in by checking a specific cookie
-  const isLoggedIn = !!Cookies.get('token'); // Replace 'user' with the actual cookie name used for authentication
-
+  const isLoggedIn = !!Cookies.get('token'); 
   return (
-    <header className="bg-gray-900 bg-opacity-75 shadow fixed top-0 left-0 w-full z-50">
+    <header className="bg-gray-900 bg-opacity-100 shadow fixed top-0 left-0 w-full z-50">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}

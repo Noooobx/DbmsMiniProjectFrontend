@@ -1,37 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { BASE_URL } from '../utils/constants';
 
 const Cart = () => {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([]); // State to hold cart items
-  const [loading, setLoading] = useState(true); // State to track loading status
-  const [error, setError] = useState(null); // State to track errors
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchCartItems = async () => {
+    try {
+      const response = await axios.get('http://localhost:3004/cart/view', { withCredentials: true });
+      setCartItems(response.data);
+    } catch (err) {
+      console.error("Error fetching cart items:", err);
+      setError("Could not fetch cart items. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const response = await axios.get('http://localhost:3004/cart/view', { withCredentials: true });
-        setCartItems(response.data);
-      } catch (err) {
-        console.error("Error fetching cart items:", err);
-        setError("Could not fetch cart items. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCartItems();
   }, []);
 
-  // Calculate total price safely by ensuring price is a number
-  const totalPrice = cartItems.reduce((acc, item) => {
-    const price = parseFloat(item.price); // Ensure price is a number
-    const quantity = item.quantity || 1; // Default to 1 if quantity is undefined
-    return acc + (isNaN(price) ? 0 : price * quantity); // Check for NaN
-  }, 0); // Calculate total price without formatting yet
+  const handleRemoveItem = async (name) => {
+    console.log(`Removing item: ${name}`);
+    await axios.post(BASE_URL + "/cart/delete", { name }, { withCredentials: true });
+    fetchCartItems();
+  };
 
-  const formattedTotalPrice = totalPrice.toFixed(2); // Format total price to 2 decimal places
+  const handleClearCart = async () => {
+    console.log("Clearing all items from cart");
+    // Add logic here to clear all items from the cart
+    await axios.post(BASE_URL + "/cart/clear", {}, { withCredentials: true });
+    fetchCartItems();
+  };
+
+  const totalPrice = cartItems.reduce((acc, item) => {
+    const price = parseFloat(item.price);
+    const quantity = item.quantity || 1;
+    return acc + (isNaN(price) ? 0 : price * quantity);
+  }, 0);
+
+  const formattedTotalPrice = totalPrice.toFixed(2);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 text-gray-800">
@@ -86,18 +99,24 @@ const Cart = () => {
         ) : (
           <div className="space-y-4">
             {cartItems.map(item => {
-              const price = parseFloat(item.price); // Convert price to number
-              const quantity = item.quantity || 1; // Ensure quantity defaults to 1 if undefined
-              const totalItemPrice = (isNaN(price) ? 0 : price) * quantity; // Calculate item total
+              const price = parseFloat(item.price);
+              const quantity = item.quantity || 1;
+              const totalItemPrice = (isNaN(price) ? 0 : price) * quantity;
 
               return (
-                <div key={item.id} className="flex justify-between p-4 bg-white rounded-lg shadow-md">
+                <div key={item.id} className="flex justify-between items-center p-4 bg-white rounded-lg shadow-md">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
                     <p className="text-gray-600">Price: ${isNaN(price) ? 'N/A' : price.toFixed(2)} x {quantity}</p>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center space-x-4">
                     <span className="font-bold text-gray-800">${totalItemPrice.toFixed(2)}</span>
+                    <button
+                      onClick={() => handleRemoveItem(item.name)}
+                      className="px-3 py-1 text-sm font-semibold text-red-600 bg-red-100 rounded-lg hover:bg-red-200 transition duration-200"
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
               );
@@ -106,7 +125,13 @@ const Cart = () => {
               <h3 className="text-lg font-semibold text-gray-800">Total Price:</h3>
               <span className="font-bold text-gray-800">${formattedTotalPrice}</span>
             </div>
-            <div className="mt-6">
+            <div className="flex justify-between mt-6 space-x-4">
+              <button
+                onClick={handleClearCart}
+                className="w-full px-4 py-2 font-semibold text-white bg-gradient-to-r from-red-500 to-pink-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"
+              >
+                Clear Cart
+              </button>
               <button
                 onClick={() => navigate('/checkout')}
                 className="w-full px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"
@@ -118,7 +143,6 @@ const Cart = () => {
         )}
       </main>
 
-      {/* Footer */}
       <footer className="py-4 bg-gray-900 text-center text-gray-300">
         <p>&copy; 2024 RestaurantName. All rights reserved.</p>
       </footer>
