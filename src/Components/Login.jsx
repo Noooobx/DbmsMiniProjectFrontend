@@ -3,12 +3,15 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL, LoginPageBG } from "../utils/constants";
 import Header from "./Header";
+import { useDispatch } from "react-redux";
+import { toggleIsLoggedIn, setEmail } from "../utils/loginSlice"; // Import setEmail here
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [email, setEmailState] = useState(""); // Renamed state variable to avoid conflict
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,8 +22,13 @@ const Login = () => {
         { email, password },
         { withCredentials: true }
       );
-      console.log("Login successful!", response);
-      navigate("/dashboard");
+      console.log("Login successful!", response.data.data[0].email);
+
+      // Dispatch actions to update Redux store with login status and email
+      dispatch(toggleIsLoggedIn()); // Toggling login status
+      dispatch(setEmail(response.data.data[0].email)); // Setting the email
+
+      navigate("/dashboard"); // Redirect to the dashboard
     } catch (error) {
       console.log("Login failed.", error.response.data.message);
       setError(error.response.data.message); // Set the error message from the server response
@@ -56,7 +64,7 @@ const Login = () => {
                 placeholder="Email"
                 className="mt-1 block w-full p-3 bg-white border border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmailState(e.target.value)} // Set email state value
               />
             </div>
             <div>

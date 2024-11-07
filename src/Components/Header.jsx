@@ -1,13 +1,20 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie'; // Make sure to install this package
+import axios from 'axios';
 
 const Header = () => {
   const navigate = useNavigate();
   const cartItemCount = useSelector((state) => state.cart.totalItemCount);
+  
+  // Access the login state from Redux
+  const islogged = useSelector((store) => store.login.isLoggedIn);
 
-  const isLoggedIn = !!Cookies.get('token'); 
+  useEffect(() => {
+    // You can use this hook to trigger any initial login check logic if needed.
+    // However, this isn't required if the login status is handled solely by Redux.
+  }, []);
+
   return (
     <header className="bg-gray-900 bg-opacity-100 shadow fixed top-0 left-0 w-full z-50">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,9 +25,9 @@ const Header = () => {
               FoodApp
             </a>
           </div>
-          
+
           {/* Navigation Links */}
-          <nav className="hidden md:flex flex-grow justify-end space-x-4">
+          <nav className="hidden md:flex flex-grow justify-end space-x-4 mr-3">
             <a href="/" className="text-gray-300 hover:text-orange-500 transition duration-200">
               Home
             </a>
@@ -82,7 +89,7 @@ const Header = () => {
             </button>
 
             {/* Conditional Rendering for Login or Dashboard */}
-            {isLoggedIn ? (
+            {islogged ? (
               <button
                 onClick={() => navigate('/dashboard')}
                 className="px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"

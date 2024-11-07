@@ -16,7 +16,7 @@ const Signup = () => {
     // Sign in the user with the credentials/
     try {
       const response = await axios.post(
-        BASE_URL + "signup",
+        BASE_URL + "/signup",
         {
           userName,
           email,
@@ -26,7 +26,7 @@ const Signup = () => {
         { withCredentials: true }
       );
       console.log("Signup successful!", response.data);
-      navigate("/menu");
+      navigate("/login");
     } catch (error) {
       console.log("Signup failed." + error);
     }

@@ -1,68 +1,187 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie'; // Ensure this library is installed for cookie management
-import axios from 'axios'; // Import Axios
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { BASE_URL } from "../utils/constants";
+import { setEmail } from "../utils/loginSlice";
+import Header from "./Header";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // Dummy user information
-  const userInfo = {
-    name: "John Doe",
-    email: "johndoe@example.com",
-    phone: "123-456-7890",
-    address: "123 Main St, Springfield, USA"
+  // Access the login status from Redux
+  const islogged = useSelector((state) => state.login.isLoggedIn);
+  const email = useSelector((store) => store.login.email);
+  console.log(email);
+
+  // State to hold form data
+  const [username, setUsername] = useState("");
+  const [profileImageUrl, setProfileImageUrl] = useState("");
+  const [phone, setPhone] = useState(""); // Replaced userInfo.phone with a separate state
+
+  console.log({ username, phone, profileImageUrl });
+
+  // Fetch user information from backend
+  const fetchUserInfo = async () => {
+    try {
+      const result = await axios.get(`${BASE_URL}/users?email=${email}`, { withCredentials: true });
+      console.log("Fetched User by Email:", result.data);
+      console.log(result.data.data[0])
+      if (result.data && result.data.length > 0) {
+        const user = result.data.data[0];
+        console.log(user)
+        setUsername(user.username);
+        setPhone(user.phone || ""); // Set phone if available
+        setProfileImageUrl(user.image_url || ""); // Set profile image URL if exists
+      }
+    } catch (error) {
+      console.log("Error fetching user info:", error);
+    }
   };
+
+  useEffect(() => {
+    if (email) {
+      fetchUserInfo();
+    }
+  }, [email]);
 
   const handleLogout = async () => {
     try {
-      // Call the logout API
-      const response = await axios.post('http://localhost:3004/logout', {}, { withCredentials: true });
-      console.log("Logout Response:", response.data); // Log the server response
-
-      // Log the current state of cookies for debugging
-      console.log('Removing user cookie:', Cookies.get('user'));
-      Cookies.remove('user'); // Remove the user cookie or any other relevant data
-      
-      // Ensure the token name and path are correct
-      console.log('Removing token cookie:', Cookies.get('token'));
-      Cookies.remove('token', { path: '/' }); // Clear the authentication token with the correct path
-
-      // Redirect to the login page after logout
-      navigate('/login');
+      // Add logout functionality here if needed
     } catch (error) {
-      console.error("Logout Error:", error.response ? error.response.data : error.message);
-      alert("Logout failed. Please try again."); // Alert user about logout failure
+      console.log("Logout error:", error);
+    }
+  };
+
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault(); // Prevent the default form submission
+
+    try {
+      const updatedData = {
+        username,
+        profileImageUrl,
+        phone,
+      };
+      console.log(updatedData);
+      // Send updated data to backend
+      const result = await axios.put(`http://localhost:3004/users/musk@gmail.com`, updatedData, {
+        withCredentials: true,
+      });
+
+      console.log("Profile updated:", result.data);
+      // Optionally, dispatch updated email to Redux
+      dispatch(setEmail(result.data.email));
+
+      alert("Profile updated successfully");
+    } catch (error) {
+      console.log("Error updating profile:", error);
+      alert("Error updating profile. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center mb-6">User Profile</h2>
-        <div className="mb-4">
-          <label className="block text-gray-700">Name:</label>
-          <p className="text-lg">{userInfo.name}</p>
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Email:</label>
-          <p className="text-lg">{userInfo.email}</p>
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Phone:</label>
-          <p className="text-lg">{userInfo.phone}</p>
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Address:</label>
-          <p className="text-lg">{userInfo.address}</p>
-        </div>
+    <div>
+      <Header />
+      <div
+        className="flex items-center justify-center min-h-screen bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${BASE_URL}/path-to-your-background-image.jpg)`, // Change to the actual background image URL
+        }}
+      >
+        <div className="flex w-full max-w-4xl p-8 space-x-8 bg-white bg-opacity-90 rounded-lg shadow-lg">
+          
+          {/* Profile Update Form */}
+          <div className="w-1/2 space-y-6">
+            <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
+              Edit Your Profile
+            </h2>
 
-        <button
-          onClick={handleLogout}
-          className="w-full px-6 py-3 mt-4 text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow hover:bg-gradient-to-l transition duration-200"
-        >
-          Logout
-        </button>
+            <form onSubmit={handleProfileUpdate} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Profile Image URL</label>
+                <input
+                  type="text"
+                  className="mt-1 block w-full p-3 border bg-white border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                  value={profileImageUrl}
+                  onChange={(e) => setProfileImageUrl(e.target.value)}
+                  placeholder="Enter Profile Image URL"
+                />
+                {profileImageUrl && (
+                  <img src={profileImageUrl} alt="Profile" className="mt-2 w-32 h-32 rounded-full" />
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Username</label>
+                <input
+                  type="text"
+                  className="mt-1 block w-full p-3 border bg-white border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter Username"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Email Address</label>
+                <input
+                  type="email"
+                  className="mt-1 block w-full p-3 border bg-white border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                  value={email}
+                  readOnly
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Phone</label>
+                <input
+                  type="text"
+                  className="mt-1 block w-full p-3 border bg-white border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Enter Phone Number"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full px-4 py-2 font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-md shadow hover:bg-gradient-to-l transition duration-200"
+              >
+                Save Changes
+              </button>
+            </form>
+
+            <div className="text-center">
+              <button
+                onClick={handleLogout}
+                className="w-full px-4 py-2 font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-md shadow hover:bg-gradient-to-l transition duration-200"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+
+          {/* Profile Info Section */}
+          <div className="w-1/2 space-y-6">
+            <h2 className="text-2xl font-semibold text-center text-gray-700">Your Profile</h2>
+            <div className="flex flex-col items-center space-y-4">
+              {profileImageUrl && (
+                <img src={profileImageUrl} alt="Profile" className="w-32 h-32 rounded-full shadow-md" />
+              )}
+              <div className="text-lg font-medium text-gray-700">
+                Name: <span className="font-normal">{username}</span>
+              </div>
+              <div className="text-lg font-medium text-gray-700">
+                Email: <span className="font-normal">{email}</span>
+              </div>
+              <div className="text-lg font-medium text-gray-700">
+                Phone: <span className="font-normal">{phone || "Not provided"}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   );
