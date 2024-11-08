@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoggedIn: false,
-  email: "", // Add email property
+  email: "", // Email property
+  user_id: null, // user_id property added
 };
 
 const loginSlice = createSlice({
@@ -16,8 +17,11 @@ const loginSlice = createSlice({
     setEmail: (state, action) => {
       state.email = action.payload; // Set the email from action payload
     },
+    setUserId: (state, action) => {
+      state.user_id = action.payload; // Set the user_id from action payload
+    },
   },
 });
 
-export const { toggleIsLoggedIn, setEmail } = loginSlice.actions;
+export const { toggleIsLoggedIn, setEmail, setUserId } = loginSlice.actions;
 export default loginSlice.reducer;

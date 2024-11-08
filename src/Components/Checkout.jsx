@@ -82,7 +82,7 @@ const Checkout = () => {
       navigate("/Orders");
     } catch (error) {
       console.error("Error placing order:", error);
-      alert("Failed to place order. Please try again.");
+      alert("Failed to place order.Item Unavailabe in the menu.Please try again.");
     }
   };
 

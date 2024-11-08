@@ -1,22 +1,44 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "./Header";
+import { useSelector } from "react-redux";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state for cancellation
+  const userId = useSelector((store) => store.login.user_id); // Get user_id from Redux store
 
   // Fetch orders data
   const fetchOrders = async () => {
     try {
-      const ordersResponse = await axios.get(
-        "http://localhost:3004/order/view",
-        { withCredentials: true }
-      );
+      const ordersResponse = await axios.get("http://localhost:3004/order/view", {
+        withCredentials: true,
+      });
       setOrders(ordersResponse.data.result); // Adjust based on actual structure
     } catch (err) {
       console.error(err); // Log the error for debugging
       setError("Failed to fetch orders.");
+    }
+  };
+
+  // Cancel order
+  const cancelOrder = async (orderId) => {
+    console.log(orderId)
+    setLoading(true); // Start loading spinner or indication
+    try {
+      const response = await axios.post(
+        `http://localhost:3004/order/cancel/${userId}/${orderId}`,
+        {},
+        { withCredentials: true }
+      );
+      alert(response.data.message); // Show success message
+      fetchOrders(); // Refresh the orders list after cancellation
+    } catch (err) {
+      console.error(err); // Log error for debugging
+      setError("Failed to cancel the order.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -42,9 +64,7 @@ const Orders = () => {
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl px-4">
             <div className="w-full bg-white bg-opacity-90 rounded-lg shadow-lg p-6">
-              <h2 className="text-3xl font-bold mb-4 text-purple-800">
-                Your Orders
-              </h2>
+              <h2 className="text-3xl font-bold mb-4 text-purple-800">Your Orders</h2>
               {orders.length === 0 ? (
                 <p className="text-gray-500">No orders placed yet.</p>
               ) : (
@@ -72,6 +92,16 @@ const Orders = () => {
                     <p className="text-lg font-semibold">
                       Quantity: <strong>{order.quantity}</strong>
                     </p>
+
+                    {/* Cancel Order Button */}
+                    {order.status !== "Cancelled" && (
+                      <button
+                        onClick={() => cancelOrder(order.order_id)} // Pass order_id to cancelOrder
+                        className="mt-4 w-full px-4 py-2 font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-md shadow hover:bg-gradient-to-l transition duration-200"
+                      >
+                        {loading ? "Cancelling..." : "Cancel Order"}
+                      </button>
+                    )}
                   </div>
                 ))
               )}

@@ -87,7 +87,7 @@ const MenuPage = () => {
                       Item Added to Cart!
                     </h3>
                     <p className="py-4 text-gray-700">
-                      {item.name} has been successfully added to your cart.
+                      Item has been successfully added to your cart.
                     </p>
                     <div className="modal-action">
                       <form method="dialog">
@@ -100,7 +100,7 @@ const MenuPage = () => {
                 </dialog>
 
                 <img
-                  src="https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg"
+                  src={item.imageURL}
                   alt={item.name}
                   className="w-full md:w-60 h-40 object-cover rounded-lg mb-4 md:mb-0 md:mr-6"
                 />

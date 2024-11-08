@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL, LoginPageBG } from "../utils/constants";
 import Header from "./Header";
 import { useDispatch } from "react-redux";
-import { toggleIsLoggedIn, setEmail } from "../utils/loginSlice"; // Import setEmail here
+import { toggleIsLoggedIn, setEmail, setUserId } from "../utils/loginSlice"; // Import setEmail here
 
 const Login = () => {
   const [email, setEmailState] = useState(""); // Renamed state variable to avoid conflict
@@ -26,7 +26,9 @@ const Login = () => {
 
       // Dispatch actions to update Redux store with login status and email
       dispatch(toggleIsLoggedIn()); // Toggling login status
+      console.log(response.data.data[0].user_id)
       dispatch(setEmail(response.data.data[0].email)); // Setting the email
+      dispatch(setUserId(response.data.data[0].user_id))
 
       navigate("/dashboard"); // Redirect to the dashboard
     } catch (error) {
