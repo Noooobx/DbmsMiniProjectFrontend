@@ -24,7 +24,7 @@ function Homepage() {
         </div>
         <div className="mt-6 relative z-20">
           <Link to="/login">
-            <button className="bg-gradient-to-r from-orange-600 via-yellow-400 to-red-500 text-white font-semibold py-2 px-6 rounded-lg shadow-xl hover:from-orange-700 hover:via-yellow-500 hover:to-red-600 transition-all duration-300 transform hover:scale-105">
+            <button className="px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200">
               <span className="text-lg uppercase tracking-wide">
                 Login / Sign Up
               </span>

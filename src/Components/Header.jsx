@@ -1,36 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useSelector } from "react-redux";
-import store from "../utils/store";
-import Cookies from "js-cookie";
+import Cookies from "js-cookie"; // To manage cookies
 
 const Header = () => {
   const navigate = useNavigate();
-  const [cartItemCount, setCartItemCount] = useState(0);
-  const token = Cookies.get("token");
-  console.log(token)
-  // Replace with actual user ID logic
-  const userId = useSelector((store) => store.login.user_id);
-  console.log(userId,cartItemCount)
 
-  const fetchCartItemCount = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3004/cart/count/${userId}`,
-        { withCredentials: true }
-      );
-      setCartItemCount(response.data.itemCount);
-    } catch (error) {
-      console.error("Failed to fetch cart item count:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      fetchCartItemCount();
-    }
-  }, [userId]);
+  // Check if user is logged in by looking for a user token in cookies
+  const userToken = Cookies.get("token");
 
   return (
     <header className="bg-gray-900 bg-opacity-100 shadow fixed top-0 left-0 w-full z-50">
@@ -41,28 +17,50 @@ const Header = () => {
               DineTime
             </a>
           </div>
-          <nav className="hidden md:flex flex-grow justify-end space-x-4 mr-3">
+
+          {/* Always visible Menu */}
+          <nav className="flex flex-grow justify-center md:justify-end space-x-4 mr-4">
             <a
-              href="/"
-              className="text-gray-300 hover:text-orange-500 transition duration-200"
+              href="/menu"
+              className="text-orange-500 text-lg font-bold hover:text-white transition duration-200"
             >
-              Home
-            </a>
-            <a
-              href="/about"
-              className="text-gray-300 hover:text-orange-500 transition duration-200"
-            >
-              About Us
-            </a>
-            <a
-              href="/contact"
-              className="text-gray-300 hover:text-orange-500 transition duration-200"
-            >
-              Contact
+              Menu
             </a>
           </nav>
+
           <div className="flex items-center space-x-4">
-            {/* User Icon */}
+            {/* Dashboard Button (Only visible if user is logged in) */}
+            {userToken && (
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="text-orange-500 text-lg font-bold hover:text-white transition duration-200"
+              >
+                Dashboard
+              </button>
+            )}
+
+            {/* Cart Button */}
+            <button
+              onClick={() => navigate("/cart")}
+              className="relative flex items-center justify-center w-8 h-8 text-gray-300 hover:text-orange-500 transition duration-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5H21M7 13l-1.35 5M17 13l1.35 5M9 21a1 1 0 100-2 1 1 0 000 2zm6 0a1 1 0 100-2 1 1 0 000 2z"
+                />
+              </svg>
+            </button>
+            
+            {/* Profile Button */}
             <button
               onClick={() => navigate("/profile")}
               className="relative flex items-center justify-center w-8 h-8 text-gray-300 hover:text-orange-500 transition duration-200"
@@ -82,50 +80,6 @@ const Header = () => {
                 />
               </svg>
             </button>
-
-            {/* Cart Icon */}
-            <button
-              onClick={() => navigate("/cart")}
-              className="relative flex items-center justify-center w-8 h-8 text-gray-300 hover:text-orange-500 transition duration-200"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5H21M7 13l-1.35 5M17 13l1.35 5M9 21a1 1 0 100-2 1 1 0 000 2zm6 0a1 1 0 100-2 1 1 0 000 2z"
-                />
-              </svg>
-              {cartItemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center font-bold">
-                  {cartItemCount}
-                </span>
-              )}
-            </button>
-
-            {
-              !userId &&  <button
-              onClick={() => navigate("/login")}
-              className="px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"
-            >
-              Login
-            </button>
-            }
-
-            {userId && (
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"
-              >
-                Dashboard
-              </button>
-            )}
           </div>
         </div>
       </div>

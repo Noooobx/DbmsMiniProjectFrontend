@@ -13,22 +13,22 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Links Section */}
+        {/* General Links Section */}
         <div className="flex flex-col md:flex-row gap-10 md:gap-20">
           <div className="flex flex-col">
-            <span className="text-xl font-semibold text-orange-500 mb-4">Menu</span>
-            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Appetizers</a>
-            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Main Courses</a>
-            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Desserts</a>
-            <a href="#" className="link link-hover text-sm text-gray-400">Beverages</a>
+            <span className="text-xl font-semibold text-orange-500 mb-4">Services</span>
+            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Catering</a>
+            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Private Dining</a>
+            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Event Hosting</a>
+            <a href="#" className="link link-hover text-sm text-gray-400">Delivery</a>
           </div>
 
           <div className="flex flex-col">
-            <span className="text-xl font-semibold text-orange-500 mb-4">Quick Links</span>
+            <span className="text-xl font-semibold text-orange-500 mb-4">Company Info</span>
             <a href="#" className="link link-hover text-sm text-gray-400 mb-2">About Us</a>
             <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Contact</a>
-            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">FAQs</a>
-            <a href="#" className="link link-hover text-sm text-gray-400">Reservations</a>
+            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Careers</a>
+            <a href="#" className="link link-hover text-sm text-gray-400">Press</a>
           </div>
         </div>
 

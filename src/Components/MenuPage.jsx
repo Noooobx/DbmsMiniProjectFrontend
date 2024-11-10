@@ -1,23 +1,37 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Header from "./Header";
+import Cookies from "js-cookie";
 
 const MenuPage = () => {
   const [menuItems, setMenuItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
   const [quantities, setQuantities] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);  // Track if the user is logged in
+  const [showModal, setShowModal] = useState(false);    // Modal visibility state
+  const [modalMessage, setModalMessage] = useState("");  // Modal message content
 
+  // Fetch menu data
   const fetchMenuData = async () => {
     try {
       const result = await axios.get("http://localhost:3004/menu/view", {
         withCredentials: true,
       });
       setMenuItems(result.data);
+      setFilteredItems(result.data);
 
       const initialQuantities = {};
       result.data.forEach((item) => {
         initialQuantities[item.name] = 1;
       });
       setQuantities(initialQuantities);
+
+      // Extract categories dynamically from the menu data
+      const uniqueCategories = [
+        ...new Set(result.data.map((item) => item.category)),
+      ];
+      setCategories(uniqueCategories);
     } catch (error) {
       console.log(error);
     }
@@ -25,10 +39,27 @@ const MenuPage = () => {
 
   useEffect(() => {
     fetchMenuData();
+    const userToken = Cookies.get("token"); // Check if the user has a valid token
+    if (!userToken) {
+      setIsLoggedIn(false); // Set the user as not logged in if no token exists
+    }
   }, []);
 
+  // Handle adding item to cart
   const handleAddToCart = async (item) => {
     const quantity = quantities[item.name] || 1;
+
+    // Check if the user is logged in by looking for a cookie (assuming a session or auth token exists)
+    const userToken = Cookies.get("token"); // Adjust cookie name as needed
+
+    if (!userToken) {
+      // User is not logged in, show the login modal
+      setModalMessage("You need to be logged in to add items to the cart.");
+      setShowModal(true); // Show modal with message
+      return;
+    }
+
+    // User is logged in, proceed with adding to the cart
     try {
       await axios.post(
         "http://localhost:3004/cart/add",
@@ -39,12 +70,24 @@ const MenuPage = () => {
         },
         { withCredentials: true }
       );
-      console.log("Added to cart:", { item, quantity });
+      setModalMessage("Item added to your cart!");
+      setShowModal(true); // Show modal with success message
     } catch (error) {
       console.log("Error adding to cart:", error);
     }
   };
 
+  // Handle category selection
+  const handleCategorySelect = (category) => {
+    if (category === "All") {
+      setFilteredItems(menuItems);
+    } else {
+      const filtered = menuItems.filter((item) => item.category === category);
+      setFilteredItems(filtered);
+    }
+  };
+
+  // Increase item quantity
   const increaseQuantity = (itemName) => {
     setQuantities((prevQuantities) => ({
       ...prevQuantities,
@@ -52,6 +95,7 @@ const MenuPage = () => {
     }));
   };
 
+  // Decrease item quantity
   const decreaseQuantity = (itemName) => {
     setQuantities((prevQuantities) => ({
       ...prevQuantities,
@@ -59,47 +103,49 @@ const MenuPage = () => {
     }));
   };
 
-  const handleModal = () => {
-    const modal = document.getElementById("my_modal_1");
-    if (modal) {
-      modal.showModal();
-    }
+  const handleCloseModal = () => {
+    setShowModal(false); // Close modal when user clicks close button
   };
 
   return (
     <div>
-      <div className="min-h-screen pt-16 bg-gray-200">
+      <Header />
+      <div className="min-h-screen pt-16 pb-16 bg-gray-200">
         <div className="flex flex-col items-center justify-center min-h-screen">
           <h1 className="text-4xl mt-8 font-bold text-center mb-6 text-orange-500">
             Our Menu
           </h1>
 
+          {/* Category Buttons */}
+          <div className="categories overflow-x-auto mb-8">
+            <div className="flex space-x-4">
+              <button
+                onClick={() => handleCategorySelect("All")}
+                className="px-6 py-3 rounded-lg text-lg font-semibold bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white transition-all duration-300 ease-in-out"
+              >
+                All
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => handleCategorySelect(category)}
+                  className="px-6 py-3 rounded-lg text-lg font-semibold bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white transition-all duration-300 ease-in-out"
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Menu Items */}
           <div className="flex flex-col w-full max-w-6xl px-4 space-y-6">
-            {menuItems.map((item) => (
+            {filteredItems.map((item) => (
               <div
                 key={item.name}
                 className="card flex flex-col md:flex-row bg-white shadow-lg border border-gray-300 rounded-lg p-4 md:p-6 hover:shadow-xl transition-shadow duration-300"
               >
-                <dialog id="my_modal_1" className="modal">
-                  <div className="modal-box bg-white">
-                    <h3 className="font-bold text-lg text-black">
-                      Item Added to Cart!
-                    </h3>
-                    <p className="py-4 text-gray-700">
-                      Item has been successfully added to your cart.
-                    </p>
-                    <div className="modal-action">
-                      <form method="dialog">
-                        <button className="btn bg-blue-500 text-white hover:bg-blue-600 transition duration-200">
-                          Close
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                </dialog>
-
                 <img
-                  src={item.imageURL}
+                  src="https://thumbs.dreamstime.com/b/generative-ai-fruits-vegetables-arranged-heart-shape-healthy-food-nutrition-concept-isolated-business-generative-ai-315051475.jpg"
                   alt={item.name}
                   className="w-full md:w-60 h-40 object-cover rounded-lg mb-4 md:mb-0 md:mr-6"
                 />
@@ -135,10 +181,7 @@ const MenuPage = () => {
                     </div>
 
                     <button
-                      onClick={(e) => {
-                        handleAddToCart(item);
-                        handleModal();
-                      }}
+                      onClick={(e) => handleAddToCart(item)}
                       className="px-4 py-2 font-semibold text-white bg-orange-500 rounded-md hover:bg-orange-600 transition duration-200"
                     >
                       Add to Cart
@@ -150,6 +193,23 @@ const MenuPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal for Login/Cart Status */}
+      {showModal && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg max-w-sm w-full shadow-lg">
+            <h3 className="font-bold text-lg text-black">{modalMessage}</h3>
+            <div className="mt-4 text-right">
+              <button
+                onClick={handleCloseModal}
+                className="btn bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
