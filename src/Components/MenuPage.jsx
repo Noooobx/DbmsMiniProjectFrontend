@@ -68,7 +68,6 @@ const MenuPage = () => {
 
   return (
     <div>
-      <Header />
       <div className="min-h-screen pt-16 bg-gray-200">
         <div className="flex flex-col items-center justify-center min-h-screen">
           <h1 className="text-4xl mt-8 font-bold text-center mb-6 text-orange-500">

@@ -6,7 +6,6 @@ const Dashboard = () => {
 
   return (
     <div>
-      <Header />
       <div
         className="flex flex-col items-center justify-center min-h-screen p-6"
         style={{

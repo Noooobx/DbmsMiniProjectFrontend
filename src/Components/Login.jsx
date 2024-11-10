@@ -39,7 +39,6 @@ const Login = () => {
 
   return (
     <div>
-      <Header />
       <div
         className="flex items-center justify-center min-h-screen bg-cover bg-center"
         style={{

@@ -48,36 +48,7 @@ const Cart = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 text-gray-800">
-      <header className="bg-gray-900 bg-opacity-75 shadow fixed top-0 left-0 w-full z-50">
-        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-16">
-            <div className="flex-shrink-0">
-              <a href="/" className="text-2xl font-bold text-orange-500">
-                FoodApp
-              </a>
-            </div>
-            <nav className="hidden md:flex flex-grow justify-end space-x-4">
-              <a href="/" className="text-gray-300 hover:text-orange-500 transition duration-200">
-                Home
-              </a>
-              <a href="/about" className="text-gray-300 hover:text-orange-500 transition duration-200">
-                About Us
-              </a>
-              <a href="/contact" className="text-gray-300 hover:text-orange-500 transition duration-200">
-                Contact
-              </a>
-            </nav>
-            <div className="flex items-center ml-4">
-              <button
-                onClick={() => navigate('/order')}
-                className="px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"
-              >
-                Login
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      
 
       <main className="flex-grow mt-16 p-4">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">Your Cart</h2>

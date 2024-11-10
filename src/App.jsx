@@ -12,11 +12,14 @@ import { Provider } from "react-redux";
 import store from "./utils/store";
 import Checkout from "./Components/Checkout";
 import Profile from "./Components/Profile";
+import Header from "./Components/Header";
+import Footer from "./Components/Footer";
 
 function App() {
   return (
     <Provider store={store}>
       <Router>
+        <Header />
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
@@ -28,8 +31,8 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/profile" element={<Profile />} />
-
         </Routes>
+        <Footer />
       </Router>
     </Provider>
   );

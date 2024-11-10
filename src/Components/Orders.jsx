@@ -48,7 +48,6 @@ const Orders = () => {
 
   return (
     <div>
-      <Header />
       <div
         className="min-h-screen bg-cover bg-center"
         style={{
