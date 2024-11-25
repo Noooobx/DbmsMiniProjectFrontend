@@ -1,17 +1,22 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { setEmail } from "../utils/loginSlice";
-import Header from "./Header";
 
+
+import Cookies from "js-cookie"; // To manage cookies
+
+const userToken = Cookies.get("token");
+console.log(userToken)
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const islogged = useSelector((state) => state.login.isLoggedIn);
   const email = useSelector((store) => store.login.email);
+
+  console.log(email)
 
   const [username, setUsername] = useState("");
   const [profileImageUrl, setProfileImageUrl] = useState("");
@@ -20,6 +25,7 @@ const Profile = () => {
   const fetchUserInfo = async () => {
     try {
       const result = await axios.get(`${BASE_URL}/users?email=${email}`, { withCredentials: true });
+      console.log(result)
       if (result.data && result.data.length > 0) {
         const user = result.data.data[0];
         setUsername(user.username);
@@ -32,6 +38,7 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    console.log(email)
     if (email) {
       fetchUserInfo();
     }
@@ -157,7 +164,7 @@ const Profile = () => {
                 <img src={profileImageUrl} alt="Profile" className="w-32 h-32 rounded-full shadow-md" />
               )}
               <div className="text-lg font-medium text-gray-700">
-                Name: <span className="font-normal">{username}</span>
+                Name: <span className="font-normal">{username || "Not provided"}</span>
               </div>
               <div className="text-lg font-medium text-gray-700">
                 Email: <span className="font-normal">{email}</span>

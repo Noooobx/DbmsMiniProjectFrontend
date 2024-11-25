@@ -1,7 +1,18 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 import { HomePageBG } from "../utils/constants";
 
 function Homepage() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check for the cookie on initial load
+  
+  useEffect(() => {
+    const userLoggedIn = Cookies.get("token"); // Check if the cookie exists
+    setIsLoggedIn(Boolean(userLoggedIn)); // If cookie exists, set logged-in state to true
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 text-gray-800">
       <section
@@ -22,15 +33,17 @@ function Homepage() {
             </p>
           </div>
         </div>
-        <div className="mt-6 relative z-20">
-          <Link to="/login">
-            <button className="px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200">
-              <span className="text-lg uppercase tracking-wide">
-                Login / Sign Up
-              </span>
-            </button>
-          </Link>
-        </div>
+        {!isLoggedIn && (
+          <div className="mt-6 relative z-20">
+            <Link to="/login">
+              <button className="px-4 py-2 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200">
+                <span className="text-lg uppercase tracking-wide">
+                  Login / Sign Up
+                </span>
+              </button>
+            </Link>
+          </div>
+        )}
       </section>
     </div>
   );
