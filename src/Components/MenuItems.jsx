@@ -1,12 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
+import Cookies from "js-cookie";
+import axios from "axios";
 
-const MenuItems = ({
-  items,
-  quantities,
-  onIncreaseQuantity,
-  onDecreaseQuantity,
-  onAddToCart,
-}) => {
+const MenuItems = ({ items }) => {
+  const [quantities, setQuantities] = useState({});
+  const [modalMessage, setModalMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
+  const onAddToCart = async (item) => {
+    const quantity = quantities[item.name] || 1;
+    const userToken = Cookies.get("token");
+
+    if (!userToken) {
+      setModalMessage("You need to be logged in to add items to the cart.");
+      setShowModal(true);
+      return;
+    }
+
+    try {
+      await axios.post(
+        "http://localhost:3004/cart/add",
+        {
+          name: item.name,
+          quantity: quantity,
+          price: parseFloat(item.price).toFixed(2),
+        },
+        { withCredentials: true }
+      );
+      setModalMessage("Item added to your cart!");
+      setShowModal(true);
+    } catch (error) {
+      console.log("Error adding to cart:", error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const onIncreaseQuantity = (itemName) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [itemName]: (prevQuantities[itemName] || 1) + 1,
+    }));
+  };
+
+  const onDecreaseQuantity = (itemName) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [itemName]: Math.max((prevQuantities[itemName] || 1) - 1, 1),
+    }));
+  };
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
       {items.map((item) => (
@@ -60,6 +104,21 @@ const MenuItems = ({
           </div>
         </div>
       ))}
+      {showModal && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg max-w-sm w-full shadow-lg">
+            <h3 className="font-bold text-lg text-black">{modalMessage}</h3>
+            <div className="mt-4 text-right">
+              <button
+                onClick={handleCloseModal}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

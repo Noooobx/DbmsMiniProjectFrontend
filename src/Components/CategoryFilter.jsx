@@ -1,6 +1,8 @@
 import React from "react";
 
 const CategoryFilter = ({ categories, onSearch, onCategorySelect, searchQuery }) => {
+
+    
   return (
     <div className="categories w-full mb-8">
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
