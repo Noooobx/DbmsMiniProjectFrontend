@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import CancelModal from "./modals/CancelModal";
+import SuccesModal from "./modals/SuccesModal";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -50,7 +52,7 @@ const Orders = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-200 flex items-center justify-center mt-20">
+    <div className="min-h-screen bg-gray-200 flex items-start justify-center mt-20">
       <div className="w-full max-w-6xl bg-gray-200 rounded-lg p-8">
         <h1 className="text-5xl font-bold text-center mb-6 text-orange-500">
           Your Orders
@@ -134,44 +136,12 @@ const Orders = () => {
         </div>
       </div>
 
-      {/* Cancel Confirmation Modal */}
       {showCancelModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg max-w-sm w-full">
-            <h3 className="text-xl font-bold text-center mb-4">Cancel Order</h3>
-            <p className="mb-4">Are you sure you want to cancel this order?</p>
-            <div className="flex justify-evenly">
-              <button
-                onClick={() => setShowCancelModal(false)} // Close modal without canceling
-                className="px-4 py-2 bg-blue-500 rounded-md text-white"
-              >
-                No
-              </button>
-              <button
-                onClick={cancelOrder} // Confirm cancellation
-                className="px-4 py-2 bg-red-500 text-white rounded-md"
-              >
-                Yes
-              </button>
-            </div>
-          </div>
-        </div>
+        <CancelModal setShowCancelModal={setShowCancelModal} cancelOrder = {cancelOrder}/>
       )}
 
-      {/* Success Modal */}
       {showSuccessModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg max-w-sm w-full">
-            <h3 className="text-xl font-bold text-center mb-4 text-green-600">Success</h3>
-            <p className="mb-4">Your order has been successfully canceled!</p>
-            <button
-              onClick={() => setShowSuccessModal(false)} // Close success modal
-              className="w-full px-4 py-2 bg-green-500 text-white rounded-md"
-            >
-              Close
-            </button>
-          </div>
-        </div>
+        <SuccesModal setShowSuccessModal={setShowSuccessModal}/>
       )}
     </div>
   );

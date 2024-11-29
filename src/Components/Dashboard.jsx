@@ -1,16 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import Header from "./Header";
-
 const Dashboard = () => {
   const navigate = useNavigate();
 
   return (
     <div>
       <div
-        className="flex flex-col items-center justify-center min-h-screen p-6"
-        style={{
-          background: "linear-gradient(to bottom right, #FFA500, #007BFF)",
-        }}
+        className="flex flex-col items-center justify-center min-h-screen p-6 bg-white"
       >
         <h1 className="text-4xl font-bold text-center text-white mb-8">
           Savor Your Experience!
