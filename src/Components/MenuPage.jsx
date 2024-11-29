@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Header from "./Header";
-import Cookies from "js-cookie";
 import CategoryFilter from "./CategoryFilter";
 import MenuItems from "./MenuItems";
 

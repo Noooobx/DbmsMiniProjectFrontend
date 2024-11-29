@@ -5,27 +5,36 @@ import { useSelector } from "react-redux";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state for cancellation
   const userId = useSelector((store) => store.login.user_id); // Get user_id from Redux store
 
   // Fetch orders data
   const fetchOrders = async () => {
     try {
-      const ordersResponse = await axios.get("http://localhost:3004/order/view", {
-        withCredentials: true,
-      });
-      setOrders(ordersResponse.data.result); // Adjust based on actual structure
+      const ordersResponse = await axios.get(
+        "http://localhost:3004/order/view",
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(ordersResponse.data.result);
+      const groupedResults = ordersResponse.data.result.reduce((acc, order) => {
+        if (!acc[order.table_number]) {
+          acc[order.table_number] = [];
+        }
+        acc[order.table_number].push(order);
+        return acc;
+      }, {});
+      console.log(groupedResults);
+      setOrders(groupedResults);
+      // Adjust based on actual structure
     } catch (err) {
       console.error(err); // Log the error for debugging
-      setError("Failed to fetch orders.");
     }
   };
 
   // Cancel order
   const cancelOrder = async (orderId) => {
-    console.log(orderId)
-    setLoading(true); // Start loading spinner or indication
+    console.log(orderId);
     try {
       const response = await axios.post(
         `http://localhost:3004/order/cancel/${userId}/${orderId}`,
@@ -36,9 +45,6 @@ const Orders = () => {
       fetchOrders(); // Refresh the orders list after cancellation
     } catch (err) {
       console.error(err); // Log error for debugging
-      setError("Failed to cancel the order.");
-    } finally {
-      setLoading(false); // Stop loading
     }
   };
 
@@ -47,68 +53,97 @@ const Orders = () => {
   }, []);
 
   return (
-    <div>
-      <div
-        className="min-h-screen bg-cover bg-center"
-        style={{
-          background: "linear-gradient(to right, #ff7e5f, #ffcc00)", // Bright gradient background
-        }}
-      >
-        <div className="flex flex-col items-center justify-center min-h-screen bg-black bg-opacity-50 p-6">
-          <h1 className="text-5xl font-bold text-center mb-6 bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
-            Your Orders
-          </h1>
-          {error && (
-            <div className="p-2 text-sm text-red-600 text-center">{error}</div>
-          )}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl px-4">
-            <div className="w-full bg-white bg-opacity-90 rounded-lg shadow-lg p-6">
-              <h2 className="text-3xl font-bold mb-4 text-purple-800">Your Orders</h2>
-              {orders.length === 0 ? (
-                <p className="text-gray-500">No orders placed yet.</p>
-              ) : (
-                orders.map((order, index) => (
-                  <div
-                    key={index} // Use index as key if no unique id is available
-                    className="border-b border-gray-300 mb-4 pb-2"
-                  >
-                    <p className="text-lg font-semibold">
-                      Order Date:{" "}
-                      <strong>
-                        {new Date(order.order_date).toLocaleDateString()}
+    <div className="min-h-screen bg-gray-200 flex items-center justify-center mt-20">
+    {/* Center the content vertically and horizontally */}
+    <div className="w-full max-w-6xl bg-gray-200 rounded-lg p-8">
+      {/* White background and padding */}
+      <h1 className="text-5xl font-bold text-center mb-6 text-orange-500">
+        Your Orders
+      </h1>
+  
+      {/* Check if there are orders */}
+      <div className="flex flex-col gap-6">
+        {Object.keys(orders).length === 0 ? ( // Check if there are no orders
+          <p className="text-gray-500 text-center">No orders placed yet.</p>
+        ) : (
+          Object.keys(orders).map((tableNumber) => (
+            <div
+              key={tableNumber}
+              className="mb-8 p-6 rounded-lg shadow-md bg-gray-50" // Table section background
+            >
+              <h3 className="text-3xl font-bold text-orange-500 mb-4 border-b-2 border-orange-300 pb-2 text-center">
+                Table ID: {tableNumber}
+              </h3>
+  
+              {/* Orders for each table */}
+              {orders[tableNumber].map((order, index) => (
+                <div
+                  key={index} // Unique key for each order in the array
+                  className="flex flex-col sm:flex-row items-center border-b border-gray-300 mb-4 pb-4 last:border-b-0"
+                >
+                  {/* Left side - Order details */}
+                  <div className="flex-1 pr-6 mb-4 sm:mb-0">
+                    <p className="text-lg font-semibold text-gray-700">
+                      <span className="font-bold">Item Name:</span>{" "}
+                      {order.item_name}
+                    </p>
+                    <p className="text-lg font-semibold text-gray-700">
+                      <span className="font-bold">Order Date:</span>{" "}
+                      {new Date(order.order_date).toLocaleDateString()}
+                    </p>
+                    <p className="text-lg font-semibold text-gray-700">
+                      <span className="font-bold">Status:</span>{" "}
+                      <strong
+                        className={`${
+                          order.status === "Cancelled"
+                            ? "text-red-600"
+                            : "text-green-600"
+                        }`}
+                      >
+                        {order.status}
                       </strong>
                     </p>
-                    <p className="text-lg font-semibold">
-                      Status:{" "}
-                      <strong className="text-green-600">{order.status}</strong>
-                    </p>
-                    <p className="text-lg font-semibold">
-                      Total Amount:{" "}
+                    <p className="text-lg font-semibold text-gray-700">
+                      <span className="font-bold">Total Amount:</span>{" "}
                       <strong>
                         ${parseFloat(order.total_amount).toFixed(2)}
                       </strong>
                     </p>
-                    <p className="text-lg font-semibold">
-                      Quantity: <strong>{order.quantity}</strong>
+                    <p className="text-lg font-semibold text-gray-700">
+                      <span className="font-bold">Quantity:</span>{" "}
+                      {order.quantity}
                     </p>
-
+  
                     {/* Cancel Order Button */}
                     {order.status !== "Cancelled" && (
                       <button
                         onClick={() => cancelOrder(order.order_id)} // Pass order_id to cancelOrder
                         className="mt-4 w-full px-4 py-2 font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-md shadow hover:bg-gradient-to-l transition duration-200"
                       >
-                        {loading ? "Cancelling..." : "Cancel Order"}
+                        Cancel Order
                       </button>
                     )}
                   </div>
-                ))
-              )}
+  
+                  {/* Right side - Image */}
+                  <div className="w-32 h-32 sm:w-48 sm:h-48 overflow-hidden rounded-lg bg-gray-200">
+                    <img
+                      src="https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg"
+                      alt="Food Item"
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-        </div>
+          ))
+        )}
       </div>
     </div>
+  </div>
+  
+
+
   );
 };
 
