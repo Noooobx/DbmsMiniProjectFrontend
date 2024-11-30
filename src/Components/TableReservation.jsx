@@ -31,10 +31,7 @@ const TableReservation = () => {
   return (
     <div>
       <div
-        className="flex items-center justify-center min-h-screen bg-cover bg-center"
-        style={{
-          backgroundImage: `url('https://images.pexels.com/photos/941861/pexels-photo-941861.jpeg?cs=srgb&dl=pexels-chanwalrus-941861.jpg&fm=jpg')`,
-        }}
+        className="flex items-center justify-center min-h-screen bg-cover bg-center bg-gray-200"
       >
         <div className="w-full max-w-md p-8 space-y-6 bg-white bg-opacity-90 rounded-lg shadow-lg">
           <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">

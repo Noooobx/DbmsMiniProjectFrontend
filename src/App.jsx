@@ -14,6 +14,7 @@ import Checkout from "./Components/Checkout";
 import Profile from "./Components/Profile";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
+import Reservations from "./Components/Reservations";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/reservations" element={<Reservations />} />
         </Routes>
         <Footer />
       </Router>

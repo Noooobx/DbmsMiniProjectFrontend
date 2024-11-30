@@ -4,9 +4,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div
-        className="flex flex-col items-center justify-center min-h-screen p-6 bg-white"
-      >
+      <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-white">
         <h1 className="text-4xl font-bold text-center text-white mb-8">
           Savor Your Experience!
         </h1>
@@ -31,6 +29,12 @@ const Dashboard = () => {
             className="w-full px-6 py-3 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"
           >
             Your Orders
+          </button>
+          <button
+            onClick={() => navigate("/reservations")}
+            className="w-full px-6 py-3 font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"
+          >
+            Reservations
           </button>
           <button
             onClick={() => navigate("/profile")}
