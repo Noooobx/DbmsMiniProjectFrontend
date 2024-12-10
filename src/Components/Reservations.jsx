@@ -42,12 +42,10 @@ const Reservations = () => {
                   <td className="py-3 px-4">{reservation.time}</td>
                   <td className="py-3 px-4">{reservation.people}</td>
                   <td className="py-3 px-4 flex gap-4">
-                    <button className="flex items-center justify-center gap-2 btn bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-orange-600 transform hover:scale-105 transition-all">
-                      <span className="material-icons">edit</span>
+                    <button className="flex items-center justify-center gap-2 bg-orange-500 text-white px-5 py-2 rounded-md font-medium shadow-lg hover:shadow-xl hover:bg-orange-600 transform hover:scale-105 transition-all focus:outline-none">
                       <span>Edit</span>
                     </button>
-                    <button className="flex items-center justify-center gap-2 btn bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transform hover:scale-105 transition-all">
-                      <span className="material-icons">delete</span>
+                    <button className="flex items-center justify-center gap-2 bg-red-600 text-white px-5 py-2 rounded-md font-medium shadow-lg hover:shadow-xl hover:bg-red-700 transform hover:scale-105 transition-all focus:outline-none">
                       <span>Cancel</span>
                     </button>
                   </td>
@@ -59,7 +57,7 @@ const Reservations = () => {
           {/* Add Reservation Button */}
           <div className="flex justify-center mt-8">
             <Link to="/reserve/table">
-              <button className="btn text-lg px-8 py-4 rounded-lg font-semibold text-white bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 shadow-lg transform hover:scale-105 transition-all">
+              <button className="flex items-center justify-center px-8 py-4 text-lg font-medium text-white bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 rounded-md shadow-lg hover:shadow-xl transform hover:scale-105 transition-all focus:outline-none">
                 + Make a Reservation
               </button>
             </Link>
