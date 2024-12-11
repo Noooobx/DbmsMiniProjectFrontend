@@ -1,171 +1,202 @@
 import React, { useState } from "react";
 import axios from "axios"; // Import Axios
 import AvailableTableLists from "./AvailableTableLists";
-import { Bars } from "react-loader-spinner"; // Import Loader component
+import { ThreeDots } from "react-loader-spinner"; // Import ThreeDots loader component
+import { BASE_URL, LoginPageBG } from "../utils/constants"; // Assuming constants
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import dayjs from "dayjs"; // Ensure dayjs is available
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  TextField,
+} from "@mui/material"; // Import MUI components
 
 const TableReservation = () => {
   const [name, setName] = useState("");
-  const [date, setDate] = useState(null);
-  const [time, setTime] = useState("10:00");
+  const [dateTime, setDateTime] = useState(dayjs()); // State to hold date and time as a dayjs object
   const [people, setPeople] = useState(1);
   const [specialRequests, setSpecialRequests] = useState("");
   const [tableType, setTableType] = useState(""); // State for table type dropdown
   const [tableInfo, setTableInfo] = useState([]); // To store the fetched table information
   const [loading, setLoading] = useState(false); // Loading state
+  const [error, setError] = useState(""); // Error message state
 
-  const handleReserve = (e) => {
+  const handleReserve = async (e) => {
     e.preventDefault();
-    console.log("Reservation made:", {
-      name,
-      date,
-      time,
-      people,
-      specialRequests,
-    });
-  };
-
-  const fetchTableInfo = async (tableinfo) => {
-    setLoading(true); // Start loading
     try {
-      // Simulate a delay of 3 seconds
-      setTimeout(async () => {
-        try {
-          const result = await axios.get(`http://localhost:3004/tableinfo?tableType=${tableinfo}`, {
-            withCredentials: true,
-          });
-          setTableInfo(result.data); // Update the table info state with fetched data
-          console.log(result.data);
-        } catch (error) {
-          console.error("Error fetching table info:", error);
-        } finally {
-          setLoading(false); // Stop loading after the delay
-        }
-      }, 1000); // Delay of 3 seconds before making the actual API call
+      const response = await axios.post(
+        BASE_URL + "/reserve",
+        {
+          name,
+          date: dateTime.format("YYYY-MM-DD"),
+          time: dateTime.format("HH:mm"),
+          people,
+          specialRequests,
+        },
+        { withCredentials: true }
+      );
+      console.log("Reservation successful!", response.data);
+      // Handle success (e.g., redirect or show a success message)
     } catch (error) {
-      console.error("Error:", error);
-      setLoading(false); // Stop loading in case of an error
+      console.log("Reservation failed.", error.response?.data?.message);
+      setError(error.response?.data?.message || "Something went wrong!");
     }
   };
 
-  // Filter tables based on selected type
-  const filteredTables = tableType
-    ? tableInfo.filter((table) => table.type === tableType)
-    : tableInfo;
+  const fetchTableInfo = async (tableinfo, people) => {
+    if (!tableinfo) return; // Don't fetch if no table type is selected
+    console.log(people, tableInfo);
+    setLoading(true);
+
+    try {
+      // Adding a 1-second delay before making the actual API request
+      setTimeout(async () => {
+        try {
+          const result = await axios.get(
+            `${BASE_URL}/tableinfo?tableType=${tableinfo}&seating_capacity=${people}`,
+            {
+              withCredentials: true,
+            }
+          );
+          console.log(result);
+          setTableInfo(result.data);
+        } catch (error) {
+          console.error("Error fetching table info:", error);
+          setError("Failed to fetch table information.");
+        } finally {
+          setLoading(false);
+        }
+      }, 500); // 1000 ms delay (1 second)
+    } catch (error) {
+      console.error("Error:", error);
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen  flex flex-col items-center justify-center bg-gray-200">
-      {/* Main Container */}
-      <div className="w-full max-w-6xl p-6 bg-white rounded-xl shadow-lg">
-        {/* Heading Section */}
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Table Reservation</h1>
-          <p className="mt-2 text-lg text-gray-600">Reserve your table and enjoy a great time!</p>
-        </div>
+    <div
+      className="flex items-center justify-center w-full min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage: `url(${LoginPageBG})`,
+      }}
+    >
+      <div className="flex w-full max-w-4xl py-8 pl-8 space-y-6 bg-white bg-opacity-90 rounded-lg shadow-lg">
+        {/* Form Section */}
+        <div className="w-full flex flex-col">
+          <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
+            Reserve Your Table
+          </h2>
 
-        {/* Flexbox Layout for Form and Available Tables */}
-        <div className="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
-          {/* Form Section (Left side) */}
-          <div className="flex-1 p-6 bg-gray-50 rounded-xl shadow-md space-y-6">
-            <form onSubmit={handleReserve} className="space-y-4">
-              {/* Name */}
-              <div className="flex flex-col">
-                <label className="text-lg font-medium text-gray-700">Name</label>
-                <input
-                  type="text"
-                  placeholder="Type your name"
-                  className="w-full p-3 border-2 border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+          <p className="text-center text-lg text-gray-700 mb-6">
+            Please fill out the details below to reserve your table.
+          </p>
+
+          {/* Reservation Form */}
+          <form onSubmit={handleReserve} className="space-y-6">
+            {/* Name (Updated to use TextField) */}
+            <div>
+              <TextField
+                id="name-input"
+                label="Your Name"
+                variant="outlined"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                fullWidth
+                required
+              />
+            </div>
+
+            {/* Date and Time (Updated to take full width) */}
+            <div>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateTimePicker
+                  label="Select Date and Time"
+                  value={dateTime}
+                  onChange={setDateTime}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      className="mt-1 "
+                      variant="outlined"
+                    />
+                  )}
                 />
-              </div>
+              </LocalizationProvider>
+            </div>
 
-              {/* Date */}
-              <div className="flex flex-col">
-                <label className="text-lg font-medium text-gray-700">Date</label>
-                <input
-                  type="date"
-                  required
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="w-full p-3 border-2 border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
+            {/* Number of People (Using MUI TextField for Number Input) */}
+            <div>
+              <TextField
+                label="Number of People"
+                type="number"
+                InputProps={{
+                  inputProps: {
+                    min: 1, // Ensures the number cannot be less than 1
+                  },
+                }}
+                fullWidth
+                variant="outlined"
+                value={people}
+                onChange={(e) => setPeople(e.target.value)}
+                required
+              />
+            </div>
 
-              {/* Time */}
-              <div className="flex flex-col">
-                <label className="text-lg font-medium text-gray-700">Time</label>
-                <input
-                  type="time"
-                  required
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  className="w-full p-3 border-2 border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              {/* Number of People */}
-              <div className="flex flex-col">
-                <label className="text-lg font-medium text-gray-700">
-                  Number of People
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  required
-                  value={people}
-                  onChange={(e) => setPeople(e.target.value)}
-                  className="w-full p-3 border-2 border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              {/* Table Type Dropdown */}
-              <div className="flex flex-col">
-                <label className="text-lg font-medium text-gray-700">
-                  Select Table Location
-                </label>
-                <select
-                  className="w-full p-3 border-2 border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            {/* Table Type (Using Material UI Select dropdown) */}
+            <div>
+              <FormControl fullWidth>
+                <InputLabel id="table-type-label">Table Type</InputLabel>
+                <Select
+                  labelId="table-type-label"
+                  id="table-type-select"
                   value={tableType}
+                  label="Table Type"
                   onChange={(e) => setTableType(e.target.value)}
                 >
-                  <option value="window_side">Window Side</option>
-                  <option value="corner">Corner</option>
-                  <option value="middle">Middle</option>
-                  <option value="outdoor">Outdoor</option>
-                  <option value="side_near_kitchen">Side Near Kitchen</option>
-                  <option value="near_entrance">Near Entrance</option>
-                  <option value="center">Center</option>
-                  <option value="balcony">Balcony</option>
-                  <option value="rooftop">Rooftop</option>
-                </select>
-              </div>
+                  <MenuItem value="window_side">Window Side</MenuItem>
+                  <MenuItem value="corner">Corner</MenuItem>
+                  <MenuItem value="middle">Middle</MenuItem>
+                  <MenuItem value="outdoor">Outdoor</MenuItem>
+                  <MenuItem value="side_near_kitchen">Near Kitchen</MenuItem>
+                  <MenuItem value="near_entrance">Near Entrance</MenuItem>
+                  <MenuItem value="center">Center</MenuItem>
+                  <MenuItem value="balcony">Balcony</MenuItem>
+                  <MenuItem value="rooftop">Rooftop</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
 
-              {/* Button to fetch and show tables */}
-              <button
-                type="button" // Button type is "button" to avoid form submission
-                onClick={() => fetchTableInfo(tableType)} // Fetch table info on click
-                className="w-full py-3 text-lg font-semibold text-white bg-gradient-to-r from-yellow-400 to-orange-500 rounded-md shadow-lg hover:bg-gradient-to-l transition duration-300 transform hover:scale-105"
-              >
-                Show Tables
-              </button>
-            </form>
-          </div>
+            {/* Button to fetch and show available tables */}
+            <button
+              type="button"
+              onClick={() => fetchTableInfo(tableType, people)} // Fetch table info on click
+              className="w-full py-3 text-lg font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-md shadow-md hover:bg-gradient-to-l transition duration-200"
+            >
+              Show Available Tables
+            </button>
 
-          {/* Available Tables Section (Right side) */}
-          <div className="flex-1 p-6 space-y-6 bg-gray-50 rounded-xl shadow-md">
-            {loading ? (
-              <div className="flex justify-center items-center h-full">
-                <Bars
-                  height="80"
-                  width="80"
-                  color="orange"
-                  ariaLabel="loading"
-                />
-              </div>
-            ) : (
-              <AvailableTableLists filteredTables={tableInfo} />
+            {/* Error Message */}
+            {error && (
+              <div className="mt-4 text-center text-red-600">{error}</div>
             )}
-          </div>
+          </form>
+        </div>
+
+        {/* Available Tables Section */}
+        <div className="w-full flex px-10 flex-col mt-6">
+        {loading ? (
+  <div className="flex justify-center items-center w-full h-full">
+    <ThreeDots height="80" width="80" color="orange" ariaLabel="loading" />
+  </div>
+) : (
+  <AvailableTableLists filteredTables={tableInfo} loading={loading} />
+)}
+
         </div>
       </div>
     </div>
