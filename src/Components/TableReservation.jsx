@@ -79,24 +79,20 @@ const TableReservation = () => {
 
   return (
     <div
-      className="flex items-center justify-center w-full min-h-screen bg-cover bg-center"
+      className="flex justify-evenly items-center w-full min-h-screen bg-cover bg-center"
       style={{
         backgroundImage: `url(${LoginPageBG})`,
       }}
     >
-      <div className="flex w-full max-w-4xl py-8 pl-8 space-y-6 bg-white bg-opacity-90 rounded-lg shadow-lg">
+      <div className="flex mt-12  flex-col md:flex-row  w-full md:max-w-4xl py-8 px-8 space-y-6 bg-white bg-opacity-90 rounded-lg shadow-lg">
         {/* Form Section */}
         <div className="w-full flex flex-col">
           <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
             Reserve Your Table
           </h2>
 
-          <p className="text-center text-lg text-gray-700 mb-6">
-            Please fill out the details below to reserve your table.
-          </p>
-
           {/* Reservation Form */}
-          <form onSubmit={handleReserve} className="space-y-6">
+          <form onSubmit={handleReserve} className="space-y-6 flex flex-col justify-evenly h-full">
             {/* Name (Updated to use TextField) */}
             <div>
               <TextField
