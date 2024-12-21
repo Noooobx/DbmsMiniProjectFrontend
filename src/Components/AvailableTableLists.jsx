@@ -50,7 +50,7 @@ const AvailableTableLists = ({ filteredTables, loading }) => {
             {/* Reserve Button */}
             <button
               onClick={() => alert(`Reserving Table ${table.table_id}`)} // Just a simple alert for now
-              className="mt-4 w-full py-2 text-lg font-semibold text-white bg-gradient-to-r from-yellow-400 to-orange-500 rounded-md shadow-lg hover:bg-gradient-to-l transition duration-300 transform hover:scale-105"
+              className="mt-4 w-full p-2 text-sm font-semibold text-white bg-gradient-to-r from-yellow-400 to-orange-500 rounded-md shadow-lg hover:bg-gradient-to-l transition duration-300 transform hover:scale-105"
             >
               Reserve Table
             </button>

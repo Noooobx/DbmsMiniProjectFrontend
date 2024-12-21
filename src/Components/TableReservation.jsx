@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import axios from "axios"; // Import Axios
+import  { useState } from "react";
+import axios from "axios"; 
 import AvailableTableLists from "./AvailableTableLists";
-import { ThreeDots } from "react-loader-spinner"; // Import ThreeDots loader component
-import { BASE_URL, LoginPageBG } from "../utils/constants"; // Assuming constants
+import { ThreeDots } from "react-loader-spinner";
+import { BASE_URL, LoginPageBG } from "../utils/constants"; 
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import dayjs from "dayjs"; // Ensure dayjs is available
+import dayjs from "dayjs";
 import {
   FormControl,
   InputLabel,
@@ -17,13 +17,12 @@ import {
 
 const TableReservation = () => {
   const [name, setName] = useState("");
-  const [dateTime, setDateTime] = useState(dayjs()); // State to hold date and time as a dayjs object
+  const [dateTime, setDateTime] = useState(dayjs()); 
   const [people, setPeople] = useState(1);
-  const [specialRequests, setSpecialRequests] = useState("");
-  const [tableType, setTableType] = useState(""); // State for table type dropdown
-  const [tableInfo, setTableInfo] = useState([]); // To store the fetched table information
-  const [loading, setLoading] = useState(false); // Loading state
-  const [error, setError] = useState(""); // Error message state
+  const [tableType, setTableType] = useState(""); 
+  const [tableInfo, setTableInfo] = useState([]); 
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState("");
 
   const handleReserve = async (e) => {
     e.preventDefault();
@@ -35,7 +34,6 @@ const TableReservation = () => {
           date: dateTime.format("YYYY-MM-DD"),
           time: dateTime.format("HH:mm"),
           people,
-          specialRequests,
         },
         { withCredentials: true }
       );
@@ -49,7 +47,6 @@ const TableReservation = () => {
 
   const fetchTableInfo = async (tableinfo, people) => {
     if (!tableinfo) return; // Don't fetch if no table type is selected
-    console.log(people, tableInfo);
     setLoading(true);
 
     try {
@@ -62,7 +59,6 @@ const TableReservation = () => {
               withCredentials: true,
             }
           );
-          console.log(result);
           setTableInfo(result.data);
         } catch (error) {
           console.error("Error fetching table info:", error);
@@ -84,7 +80,7 @@ const TableReservation = () => {
         backgroundImage: `url(${LoginPageBG})`,
       }}
     >
-      <div className="flex mt-12  flex-col md:flex-row  w-full md:max-w-4xl py-8 px-8 space-y-6 bg-white bg-opacity-90 rounded-lg shadow-lg">
+      <div className="flex mt-16 flex-col md:flex-row w-full md:max-w-4xl py-8 px-8 space-y-6 bg-white bg-opacity-90 rounded-lg shadow-lg">
         {/* Form Section */}
         <div className="w-full flex flex-col">
           <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
@@ -92,8 +88,10 @@ const TableReservation = () => {
           </h2>
 
           {/* Reservation Form */}
-          <form onSubmit={handleReserve} className="space-y-6 flex flex-col justify-evenly h-full">
-            {/* Name (Updated to use TextField) */}
+          <form
+            onSubmit={handleReserve}
+            className="space-y-6 flex flex-col justify-evenly h-full"
+          >
             <div>
               <TextField
                 id="name-input"
@@ -106,18 +104,17 @@ const TableReservation = () => {
               />
             </div>
 
-            {/* Date and Time (Updated to take full width) */}
             <div>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DateTimePicker
                   label="Select Date and Time"
                   value={dateTime}
-                  onChange={setDateTime}
+                  onChange={(newDate) => setDateTime(newDate)}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       fullWidth
-                      className="mt-1 "
+                      className="mt-1"
                       variant="outlined"
                     />
                   )}
@@ -125,7 +122,6 @@ const TableReservation = () => {
               </LocalizationProvider>
             </div>
 
-            {/* Number of People (Using MUI TextField for Number Input) */}
             <div>
               <TextField
                 label="Number of People"
@@ -143,7 +139,6 @@ const TableReservation = () => {
               />
             </div>
 
-            {/* Table Type (Using Material UI Select dropdown) */}
             <div>
               <FormControl fullWidth>
                 <InputLabel id="table-type-label">Table Type</InputLabel>
@@ -185,14 +180,18 @@ const TableReservation = () => {
 
         {/* Available Tables Section */}
         <div className="w-full flex px-10 flex-col mt-6">
-        {loading ? (
-  <div className="flex justify-center items-center w-full h-full">
-    <ThreeDots height="80" width="80" color="orange" ariaLabel="loading" />
-  </div>
-) : (
-  <AvailableTableLists filteredTables={tableInfo} loading={loading} />
-)}
-
+          {loading ? (
+            <div className="flex justify-center items-center w-full h-full">
+              <ThreeDots
+                height="80"
+                width="80"
+                color="orange"
+                ariaLabel="loading"
+              />
+            </div>
+          ) : (
+            <AvailableTableLists filteredTables={tableInfo} loading={loading} />
+          )}
         </div>
       </div>
     </div>
