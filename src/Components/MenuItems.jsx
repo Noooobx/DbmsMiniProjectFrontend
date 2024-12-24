@@ -52,44 +52,44 @@ const MenuItems = ({ items }) => {
       [itemName]: Math.max((prevQuantities[itemName] || 1) - 1, 1),
     }));
   };
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
+    <div className="container mx-auto p-6 max-w-4xl lg:max-w-7xl">
       {items.map((item) => (
         <div
           key={item.name}
-          className="card flex flex-col bg-white shadow-lg border border-gray-300 rounded-lg p-4 hover:shadow-xl transition-shadow duration-300"
+          className="flex flex-col md:flex-row items-center justify-between bg-white shadow-lg rounded-lg p-6 mb-6 hover:shadow-2xl transition-shadow duration-300"
         >
+          {/* Image Section */}
           <img
             src="https://thumbs.dreamstime.com/b/generative-ai-fruits-vegetables-arranged-heart-shape-healthy-food-nutrition-concept-isolated-business-generative-ai-315051475.jpg"
             alt={item.name}
-            className="w-full h-40 object-cover rounded-lg mb-4"
+            className="w-full md:w-1/3 h-48 object-cover rounded-lg mb-4 md:mb-0"
           />
 
-          <div className="flex flex-col justify-between flex-1">
-            <div>
-              <h2 className="text-2xl font-bold text-purple-800 mb-2">
-                {item.name}
-              </h2>
-              <p className="text-gray-600 mb-4">{item.description}</p>
-              <p className="text-lg font-bold text-orange-500">
-                ${parseFloat(item.price).toFixed(2)}
-              </p>
-            </div>
+          {/* Content Section */}
+          <div className="flex flex-col md:w-2/3 md:pl-6">
+            <h2 className="text-3xl font-semibold text-gray-800 mb-2">{item.name}</h2>
+            <p className="text-gray-600 mb-4">{item.description}</p>
+            <p className="text-lg font-semibold text-orange-500 mb-4">
+              ${parseFloat(item.price).toFixed(2)}
+            </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-between mt-4 gap-4">
-              <div className="flex items-center space-x-2">
+            {/* Quantity & Add to Cart */}
+            <div className="flex items-center justify-between gap-4 mb-4">
+              <div className="flex items-center space-x-4">
                 <button
                   onClick={() => onDecreaseQuantity(item.name)}
-                  className="px-3 py-1 font-bold text-white bg-orange-500 rounded-md hover:bg-orange-600"
+                  className="px-4 py-2 font-bold text-white bg-orange-500 rounded-full hover:bg-orange-600 transition duration-300"
                 >
                   -
                 </button>
-                <span className="text-lg font-semibold">
+                <span className="text-xl font-semibold">
                   {quantities[item.name] || 1}
                 </span>
                 <button
                   onClick={() => onIncreaseQuantity(item.name)}
-                  className="px-3 py-1 font-bold text-white bg-orange-500 rounded-md hover:bg-orange-600"
+                  className="px-4 py-2 font-bold text-white bg-orange-500 rounded-full hover:bg-orange-600 transition duration-300"
                 >
                   +
                 </button>
@@ -97,7 +97,7 @@ const MenuItems = ({ items }) => {
 
               <button
                 onClick={() => onAddToCart(item)}
-                className="px-4 py-2 font-semibold text-white bg-orange-500 rounded-md hover:bg-orange-600 transition duration-200"
+                className="px-6 py-3 font-semibold text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition duration-200"
               >
                 Add to Cart
               </button>
@@ -106,7 +106,7 @@ const MenuItems = ({ items }) => {
         </div>
       ))}
       {showModal && (
-       <CartSuccesModal handleCloseModal={handleCloseModal}/>
+        <CartSuccesModal handleCloseModal={handleCloseModal} />
       )}
     </div>
   );

@@ -1,36 +1,66 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { setEmail } from "../utils/loginSlice";
+import Cookies from "js-cookie"; 
+import {
+  Container,
+  Grid,
+  Card,
+  CardContent,
+  Avatar,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  Chip,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import LogoutModal from "./modals/LogoutModal";
 
+// Styled Card
+const StyledCard = styled(Card)({
+  borderRadius: "8px",
+  boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+  background: "#FFFFFF",
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  color: "#333",
+});
 
-import Cookies from "js-cookie"; // To manage cookies
-
-const userToken = Cookies.get("token");
-console.log(userToken)
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const email = useSelector((store) => store.login.email);
-
-  console.log(email)
-
   const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [profileImageUrl, setProfileImageUrl] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [openLogoutModal, setOpenLogoutModal] = useState(false);
+
+  const token = Cookies.get("token");
+  const [header, payload, signature] = token.split(".");
+  const decodedPayload = JSON.parse(atob(payload));
+  const email = decodedPayload._email;
 
   const fetchUserInfo = async () => {
     try {
-      const result = await axios.get(`${BASE_URL}/users?email=${email}`, { withCredentials: true });
-      console.log(result)
-      if (result.data && result.data.length > 0) {
+      const result = await axios.get(`${BASE_URL}/users?email=${email}`, {
+        withCredentials: true,
+      });
+      if (result.data) {
         const user = result.data.data[0];
         setUsername(user.username);
+        setFirstName(user.first_name || "");
+        setLastName(user.last_name || "");
         setPhone(user.phone || "");
         setProfileImageUrl(user.image_url || "");
+        setAddress(user.address || "");
       }
     } catch (error) {
       console.log("Error fetching user info:", error);
@@ -38,22 +68,15 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    console.log(email)
-    if (email) {
-      fetchUserInfo();
-    }
+    if (email) fetchUserInfo();
   }, [email]);
 
   const handleLogout = async () => {
     try {
-      // Send a request to logout route on server to clear the cookies server-side
       await axios.post(`${BASE_URL}/logout`, {}, { withCredentials: true });
-      
-      // Alternatively, if cookies need to be deleted client-side:
-      document.cookie = "your_cookie_name=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      
-      dispatch(setEmail(null)); // Clear Redux store
-      navigate("/login"); // Redirect to login
+      Cookies.remove("auth_token");
+      dispatch(setEmail(null));
+      navigate("/login");
     } catch (error) {
       console.log("Logout error:", error);
     }
@@ -61,16 +84,11 @@ const Profile = () => {
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
-
     try {
-      const updatedData = {
-        username,
-        profileImageUrl,
-        phone,
-      };
-
-      const result = await axios.put(`${BASE_URL}/users/${email}`, updatedData, { withCredentials: true });
-      dispatch(setEmail(result.data.email));
+      const updatedData = { username, firstName, lastName, profileImageUrl, phone, address };
+      await axios.put(`${BASE_URL}/users/${email}`, updatedData, {
+        withCredentials: true,
+      });
       alert("Profile updated successfully");
     } catch (error) {
       console.log("Error updating profile:", error);
@@ -79,104 +97,169 @@ const Profile = () => {
   };
 
   return (
-    <div>
-      <div
-        className="flex items-center justify-center min-h-screen bg-cover bg-center"
-        style={{
-          backgroundImage: `url(${BASE_URL}/path-to-your-background-image.jpg)`,
-        }}
-      >
-        <div className="flex w-full max-w-4xl p-8 space-x-8 bg-white bg-opacity-90 rounded-lg shadow-lg">
-          <div className="w-1/2 space-y-6">
-            <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-              Edit Your Profile
-            </h2>
-
-            <form onSubmit={handleProfileUpdate} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Profile Image URL</label>
-                <input
-                  type="text"
-                  className="mt-1 block w-full p-3 border bg-white border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
-                  value={profileImageUrl}
-                  onChange={(e) => setProfileImageUrl(e.target.value)}
-                  placeholder="Enter Profile Image URL"
+    <Container
+      sx={{
+        py: 6,
+        px: { xs: 2, sm: 4 },
+        maxWidth: "xl",
+        width: "100%",
+      }}
+      className="md:h-screen flex items-center"
+    >
+      <Grid container spacing={4} sx={{ mt: 4 }}>
+        {/* Profile Section */}
+        <Grid item xs={12} md={4}>
+          <StyledCard>
+            <CardContent>
+              <Box sx={{ textAlign: "center", mb: 2 }}>
+                <Typography variant="h5" fontWeight="bold" color="primary.main" sx={{ mb: 1 }}>
+                  Your Profile
+                </Typography>
+                <Avatar
+                  src={profileImageUrl}
+                  alt="Profile"
+                  sx={{
+                    width: 150,
+                    height: 150,
+                    mx: "auto",
+                    border: "4px solid #CCC",
+                    boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+                    mb: 2,
+                  }}
                 />
-                {profileImageUrl && (
-                  <img src={profileImageUrl} alt="Profile" className="mt-2 w-32 h-32 rounded-full" />
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Username</label>
-                <input
-                  type="text"
-                  className="mt-1 block w-full p-3 border bg-white border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter Username"
+                <Chip
+                  label={email}
+                  sx={{
+                    mb: 2,
+                    backgroundColor: "#E0E0E0",
+                    color: "#333",
+                    fontSize: "14px",
+                  }}
                 />
-              </div>
+                <Typography variant="h6" fontWeight="bold">
+                  {username || "No Username"}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {phone || "Phone number not provided"}
+                </Typography>
+              </Box>
+              <Box sx={{ mt: "auto", textAlign: "center" }}>
+                <Button
+                  onClick={() => setOpenLogoutModal(true)}
+                  variant="contained"
+                  sx={{
+                    maxWidth: "150px",
+                    width: "100%",
+                    borderRadius: "20px",
+                    textTransform: "none",
+                    padding: "8px",
+                    fontWeight: "bold",
+                    backgroundColor: "#383838",
+                    color: "white",
+                  }}
+                >
+                  LOG OUT
+                </Button>
+              </Box>
+            </CardContent>
+          </StyledCard>
+        </Grid>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Email Address</label>
-                <input
-                  type="email"
-                  className="mt-1 block w-full p-3 border bg-white border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
-                  value={email}
-                  readOnly
-                />
-              </div>
+        {/* Edit Section */}
+        <Grid item xs={12} md={8}>
+          <StyledCard>
+            <CardContent>
+              <form onSubmit={handleProfileUpdate}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        label="Profile Image URL"
+                        variant="outlined"
+                        fullWidth
+                        value={profileImageUrl}
+                        onChange={(e) => setProfileImageUrl(e.target.value)}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        label="First Name"
+                        variant="outlined"
+                        fullWidth
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        label="Last Name"
+                        variant="outlined"
+                        fullWidth
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        label="Username"
+                        variant="outlined"
+                        fullWidth
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        label="Phone"
+                        variant="outlined"
+                        fullWidth
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                      />
+                    </Grid>
+                  </Grid>
+                  <TextField
+                    label="Address"
+                    variant="outlined"
+                    fullWidth
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                  <Box sx={{ textAlign: "center" }}>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      sx={{
+                        maxWidth: "250px",
+                        width: "100%",
+                        borderRadius: "8px",
+                        textTransform: "none",
+                        padding: "8px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Save Changes
+                    </Button>
+                  </Box>
+                </Box>
+              </form>
+            </CardContent>
+          </StyledCard>
+        </Grid>
+      </Grid>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Phone</label>
-                <input
-                  type="text"
-                  className="mt-1 block w-full p-3 border bg-white border-gray-300 rounded-md shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Enter Phone Number"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full px-4 py-2 font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-md shadow hover:bg-gradient-to-l transition duration-200"
-              >
-                Save Changes
-              </button>
-            </form>
-
-            <div className="text-center">
-              <button
-                onClick={handleLogout}
-                className="w-full px-4 py-2 font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-md shadow hover:bg-gradient-to-l transition duration-200"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-
-          <div className="w-1/2 space-y-6">
-            <h2 className="text-2xl font-semibold text-center text-gray-700">Your Profile</h2>
-            <div className="flex flex-col items-center space-y-4">
-              {profileImageUrl && (
-                <img src={profileImageUrl} alt="Profile" className="w-32 h-32 rounded-full shadow-md" />
-              )}
-              <div className="text-lg font-medium text-gray-700">
-                Name: <span className="font-normal">{username || "Not provided"}</span>
-              </div>
-              <div className="text-lg font-medium text-gray-700">
-                Email: <span className="font-normal">{email}</span>
-              </div>
-              <div className="text-lg font-medium text-gray-700">
-                Phone: <span className="font-normal">{phone || "Not provided"}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      {/* Logout Modal */}
+      <LogoutModal
+        open={openLogoutModal}
+        onClose={() => setOpenLogoutModal(false)}
+        onLogout={handleLogout}
+      />
+    </Container>
   );
 };
 

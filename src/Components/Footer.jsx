@@ -1,58 +1,88 @@
-import React from 'react';
-import { FaFacebook, FaInstagram, FaTwitter, FaYoutube, FaLinkedin, FaEnvelope } from 'react-icons/fa';
+import React from "react";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaTwitter,
+  FaYoutube,
+  FaLinkedin,
+  FaEnvelope,
+} from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="footer p-10 bg-gray-900 text-gray-300">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
+    <footer className="footer bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-300 py-12">
+      <div className="container mx-auto flex flex-col md:flex-row justify-center items-center gap-10 px-6">
         {/* Logo and About Section */}
         <div className="text-center md:text-left">
-          <h2 className="text-3xl font-bold mb-2 text-orange-500">DineTime</h2>
-          <p className="text-sm text-gray-400">
-            Discover a variety of exquisite dining options with us. Exceptional food and a cozy atmosphere.
+          <h2 className="text-4xl font-bold mb-4 text-orange-500">DineTime</h2>
+          <p className="text-base text-gray-400 max-w-sm leading-relaxed">
+            Explore exquisite dining experiences with us. Enjoy exceptional
+            food, a cozy ambiance, and memories to cherish.
           </p>
         </div>
 
         {/* General Links Section */}
-        <div className="flex flex-col md:flex-row gap-10 md:gap-20">
-          <div className="flex flex-col">
-            <span className="text-xl font-semibold text-orange-500 mb-4">Services</span>
-            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Catering</a>
-            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Private Dining</a>
-            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Event Hosting</a>
-            <a href="#" className="link link-hover text-sm text-gray-400">Delivery</a>
+        <div className="flex flex-wrap md:flex-nowrap gap-12">
+          <div className="flex flex-col text-center md:text-left">
+            <h3 className="text-lg font-semibold text-orange-500 mb-3">
+              Services
+            </h3>
+            <a href="#" className="hover:text-orange-400 text-sm mb-2">
+              Catering
+            </a>
+            <a href="#" className="hover:text-orange-400 text-sm mb-2">
+              Private Dining
+            </a>
+            <a href="#" className="hover:text-orange-400 text-sm mb-2">
+              Event Hosting
+            </a>
+            <a href="#" className="hover:text-orange-400 text-sm">
+              Delivery
+            </a>
           </div>
 
-          <div className="flex flex-col">
-            <span className="text-xl font-semibold text-orange-500 mb-4">Company Info</span>
-            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">About Us</a>
-            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Contact</a>
-            <a href="#" className="link link-hover text-sm text-gray-400 mb-2">Careers</a>
-            <a href="#" className="link link-hover text-sm text-gray-400">Press</a>
+          <div className="flex flex-col text-center md:text-left">
+            <h3 className="text-lg font-semibold text-orange-500 mb-3">
+              Company Info
+            </h3>
+            <a href="#" className="hover:text-orange-400 text-sm mb-2">
+              About Us
+            </a>
+            <a href="#" className="hover:text-orange-400 text-sm mb-2">
+              Contact
+            </a>
+            <a href="#" className="hover:text-orange-400 text-sm mb-2">
+              Careers
+            </a>
+            <a href="#" className="hover:text-orange-400 text-sm">
+              Press
+            </a>
           </div>
         </div>
 
         {/* Social Media Section */}
-        <div className="text-center md:text-left mt-8 md:mt-0">
-          <span className="text-xl font-semibold text-orange-500 mb-4 block">Follow Us</span>
-          <div className="flex justify-center md:justify-start space-x-6">
-            <a href="#" className="text-white hover:text-orange-500">
-              <FaFacebook className="text-2xl" />
+        <div className="text-center md:text-right">
+          <h3 className="text-lg font-semibold text-orange-500 mb-4">
+            Follow Us
+          </h3>
+          <div className="flex justify-center md:justify-end space-x-5">
+            <a href="#" className="hover:text-orange-400 text-2xl">
+              <FaFacebook />
             </a>
-            <a href="#" className="text-white hover:text-orange-500">
-              <FaInstagram className="text-2xl" />
+            <a href="#" className="hover:text-orange-400 text-2xl">
+              <FaInstagram />
             </a>
-            <a href="#" className="text-white hover:text-orange-500">
-              <FaTwitter className="text-2xl" />
+            <a href="#" className="hover:text-orange-400 text-2xl">
+              <FaTwitter />
             </a>
-            <a href="#" className="text-white hover:text-orange-500">
-              <FaYoutube className="text-2xl" />
+            <a href="#" className="hover:text-orange-400 text-2xl">
+              <FaYoutube />
             </a>
-            <a href="mailto:info@example.com" className="text-white hover:text-orange-500">
-              <FaEnvelope className="text-2xl" />
+            <a href="mailto:info@example.com" className="hover:text-orange-400 text-2xl">
+              <FaEnvelope />
             </a>
-            <a href="https://www.linkedin.com" className="text-white hover:text-orange-500">
-              <FaLinkedin className="text-2xl" />
+            <a href="https://www.linkedin.com" className="hover:text-orange-400 text-2xl">
+              <FaLinkedin />
             </a>
           </div>
         </div>
@@ -60,7 +90,9 @@ const Footer = () => {
 
       {/* Footer Bottom */}
       <div className="mt-8 border-t border-gray-700 pt-6 text-center">
-        <p className="text-sm text-gray-400">&copy; 2024 DineTime. All rights reserved.</p>
+        <p className="text-sm text-gray-400">
+          &copy; {new Date().getFullYear()} <span className="text-orange-500">DineTime</span>. All rights reserved.
+        </p>
       </div>
     </footer>
   );

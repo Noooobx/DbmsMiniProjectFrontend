@@ -20,21 +20,24 @@ function App() {
   return (
     <Provider store={store}>
       <Router>
-        <Header />
-        <Routes>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/reserve/table" element={<TableReservation />} />
-          <Route path="/menu" element={<MenuPage />} />
-          <Route path="/" element={<Homepage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/reservations" element={<Reservations />} />
-        </Routes>
-        <Footer />
+        {/* Add bg-gray-300 to the root container */}
+        <div className="bg-gray-200 min-h-screen">
+          <Header />
+          <Routes>
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/reserve/table" element={<TableReservation />} />
+            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/" element={<Homepage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/reservations" element={<Reservations />} />
+          </Routes>
+          <Footer />
+        </div>
       </Router>
     </Provider>
   );
