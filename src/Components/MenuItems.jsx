@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import CartSuccesModal from "./modals/CartSuccesModal";
+import Pagination from "@mui/material/Pagination";
 
-const MenuItems = ({ items }) => {
+const MenuItems = ({ items, fetchMenuData, offset, setOffset }) => {
   const [quantities, setQuantities] = useState({});
   const [modalMessage, setModalMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -69,7 +70,9 @@ const MenuItems = ({ items }) => {
 
           {/* Content Section */}
           <div className="flex flex-col md:w-2/3 md:pl-6">
-            <h2 className="text-3xl font-semibold text-gray-800 mb-2">{item.name}</h2>
+            <h2 className="text-3xl font-semibold text-gray-800 mb-2">
+              {item.name}
+            </h2>
             <p className="text-gray-600 mb-4">{item.description}</p>
             <p className="text-lg font-semibold text-orange-500 mb-4">
               ${parseFloat(item.price).toFixed(2)}
@@ -105,9 +108,17 @@ const MenuItems = ({ items }) => {
           </div>
         </div>
       ))}
-      {showModal && (
-        <CartSuccesModal handleCloseModal={handleCloseModal} />
-      )}
+      {showModal && <CartSuccesModal handleCloseModal={handleCloseModal} />}
+      <div className="flex items-center justify-center w-full mt-24 my-4">
+        <Pagination
+          onChange={(e, value) => {
+            setOffset((value - 1) * 10);
+          }}
+          className="text-orange-400"
+          count={10}
+          color="primary"
+        />
+      </div>
     </div>
   );
 };

@@ -9,13 +9,16 @@ const MenuPage = () => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [offset,setOffset] = useState(0);
+ 
   // Fetch menu data
   const fetchMenuData = async () => {
     try {
-      const result = await axios.get("http://localhost:3004/menu/view", {
+      console.log("Menu fetch called")
+      const result = await axios.get(`http://localhost:3004/menu/view/${offset}`, {
         withCredentials: true,
       });
+      console.log(result.data)
       setMenuItems(result.data);
       setFilteredItems(result.data);
 
@@ -35,7 +38,7 @@ const MenuPage = () => {
 
   useEffect(() => {
     fetchMenuData();
-  }, []);
+  }, [offset]);
 
   // Handlers
   const handleSearch = (event) => {
@@ -75,6 +78,9 @@ const MenuPage = () => {
           {/* Menu Items */}
           <MenuItems
             items={filteredItems}
+            fetchMenuData={fetchMenuData}
+            offset={offset}
+            setOffset={setOffset}
           />
         </div>
       </div>
