@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import CartSuccesModal from "./modals/CartSuccesModal";
 import Pagination from "@mui/material/Pagination";
+import { addItem } from "../utils/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
 
-const MenuItems = ({ items, fetchMenuData, offset, setOffset }) => {
+const MenuItems = ({ items, fetchMenuData, offset, setOffset,setPage }) => {
   const [quantities, setQuantities] = useState({});
   const [modalMessage, setModalMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
-
+  const dispatch = useDispatch();
   const onAddToCart = async (item) => {
     const quantity = quantities[item.name] || 1;
     const userToken = Cookies.get("token");
@@ -18,6 +20,7 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset }) => {
       setShowModal(true);
       return;
     }
+    console.log(quantities)
 
     try {
       await axios.post(
@@ -39,12 +42,16 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset }) => {
   const handleCloseModal = () => {
     setShowModal(false);
   };
+  const itemCount = useSelector((store) =>{
+    return store.cart.totalItemCount
+  })
 
   const onIncreaseQuantity = (itemName) => {
     setQuantities((prevQuantities) => ({
       ...prevQuantities,
       [itemName]: (prevQuantities[itemName] || 1) + 1,
     }));
+    dispatch(addItem(itemCount + 1));
   };
 
   const onDecreaseQuantity = (itemName) => {
@@ -52,7 +59,19 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset }) => {
       ...prevQuantities,
       [itemName]: Math.max((prevQuantities[itemName] || 1) - 1, 1),
     }));
+  
   };
+
+  const handlePageChange = (value) => {
+    setOffset((value - 1) * 10);
+    setPage(value);
+    console.log("Page changed to:", value);
+  };
+
+
+  useEffect(() => {
+    handlePageChange(1);
+  }, []);
 
   return (
     <div className="container mx-auto p-6 max-w-4xl lg:max-w-7xl">
@@ -111,9 +130,7 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset }) => {
       {showModal && <CartSuccesModal handleCloseModal={handleCloseModal} />}
       <div className="flex items-center justify-center w-full mt-24 my-4">
         <Pagination
-          onChange={(e, value) => {
-            setOffset((value - 1) * 10);
-          }}
+          onChange={(e, value) => handlePageChange(value)}
           className="text-orange-400"
           count={10}
           color="primary"
