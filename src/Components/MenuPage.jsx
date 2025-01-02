@@ -85,7 +85,6 @@ const MenuPage = () => {
     if(searchQuery === "") return;
     const result = await axios.get(`${BASE_URL}/menu/search/${searchQuery}`,{withCredentials:true});
     setSeachResults(result.data)
-    //console.log(result);
   };
 
   const handleCategorySelect = (category) => {
@@ -114,6 +113,7 @@ const MenuPage = () => {
             searchQuery={searchQuery}
             setPage={setPage}
             searchResults={searchResults}
+            setFilteredItems={setFilteredItems}
           />
 
           {/* Menu Items */}

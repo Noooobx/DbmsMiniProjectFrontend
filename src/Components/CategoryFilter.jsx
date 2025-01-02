@@ -6,6 +6,7 @@ const CategoryFilter = ({
   onCategorySelect,
   searchQuery,
   searchResults,
+  setFilteredItems,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const handleFocus = () => {
@@ -15,6 +16,8 @@ const CategoryFilter = ({
     setIsFocused(false);
     console.log("Input lost focus!");
   };
+
+  const hanldeSearch = () => {};
   return (
     <div className="categories w-full flex justify-center mb-8 px-4">
       <div className="flex flex-col w-full max-w-5xl gap-8 items-center">
@@ -26,7 +29,7 @@ const CategoryFilter = ({
             value={searchQuery}
             onChange={onSearch}
             onFocus={handleFocus}
-            onBlur={handleBlur}
+            //onBlur={handleBlur}
             placeholder="Search items..."
             className="w-full max-w-lg px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200"
           />
@@ -40,7 +43,12 @@ const CategoryFilter = ({
                     <li
                       key={data.id}
                       className="px-4 py-2 cursor-pointer hover:bg-orange-100 hover:text-orange-600 transition-all duration-200"
-                      onClick={() => console.log(`Selected: ${data.name}`)}
+                      onClick={() => {
+                        hanldeSearch();
+                        const searchResult = [];
+                        searchResult[0] = data;
+                        setFilteredItems(searchResult)
+                      }}
                     >
                       {data.name}
                     </li>
