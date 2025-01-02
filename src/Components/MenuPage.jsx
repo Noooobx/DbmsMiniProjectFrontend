@@ -7,6 +7,7 @@ import CategoryFilter from "./CategoryFilter";
 import MenuItems from "./MenuItems";
 import { addItem } from "../utils/pageSlice";
 import { BASE_URL } from "../utils/constants";
+import { addSearchInfo } from "../utils/menuSlice";
 
 const MenuPage = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -73,17 +74,44 @@ const MenuPage = () => {
     fetchMenuData();
     window.scrollTo({
       top: 0,
-      behavior: "smooth", 
+      behavior: "smooth",
     });
   }, [page]);
 
   // Handlers
+  let debounceTimer;
+  const searchInfo = useSelector((store) => {
+    return store.menu;
+  });
+  console.log(searchInfo);
   const handleSearch = async (event) => {
-    const result = await axios.get(
-      `${BASE_URL}/menu/search/${event.target.value}`,
-      { withCredentials: true }
-    );
-    setFilteredItems(result.data);
+    if (event.target.value == "") {
+      fetchMenuData();
+      return;
+    }
+    // Debouncing
+    // Clear the timer if the input to the api keeps changing.
+    clearTimeout(debounceTimer);
+
+    // Timer to introduce delay.
+    debounceTimer = setTimeout(async () => {
+      //before calling the api check if for the current input there is a value that is already stored in the store
+      // if not then proceed with the api call and if not then fetch info from the store and update the filteredItems.
+      
+      if (searchInfo) {
+        const result = await axios.get(
+          `${BASE_URL}/menu/search/${event.target.value}`,
+          { withCredentials: true }
+        );
+        setFilteredItems(result.data);
+        const obj = {
+          [event.target.value]: result.data,
+        };
+        dispatch(addSearchInfo(obj));
+      } else {
+        setFilteredItems(searchInfo);
+      }
+    }, 300);
   };
 
   const handleCategorySelect = (category) => {
