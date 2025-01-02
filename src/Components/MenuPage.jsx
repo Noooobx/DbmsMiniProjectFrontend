@@ -12,23 +12,18 @@ const MenuPage = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [offset, setOffset] = useState(0);
   const [page, setPage] = useState(0);
-  const [searchResults, setSeachResults] = useState(null);
-
-  console.log(searchQuery);
 
   const dispatch = useDispatch();
   const pageContent = useSelector((store) => {
     return store.page;
   });
-  
 
   // Fetch menu data
   const fetchMenuData = async () => {
     try {
-      // If there exists data for the specific page 
+      // If there exists data for the specific page
       if (!pageContent[page]) {
         const result = await axios.get(
           `http://localhost:3004/menu/view/${offset}`,
@@ -55,7 +50,6 @@ const MenuPage = () => {
         ];
         setCategories(uniqueCategories);
       } else {
-        // Update State from the store.xxxxxxxx
         setCategories(pageContent[page]);
         setMenuItems(pageContent[page]);
         setFilteredItems(pageContent[page]);
@@ -77,14 +71,19 @@ const MenuPage = () => {
 
   useEffect(() => {
     fetchMenuData();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", 
+    });
   }, [page]);
 
   // Handlers
-  const handleSearch = async(event) => {
-    setSearchQuery(event.target.value);
-    if(searchQuery === "") return;
-    const result = await axios.get(`${BASE_URL}/menu/search/${searchQuery}`,{withCredentials:true});
-    setSeachResults(result.data)
+  const handleSearch = async (event) => {
+    const result = await axios.get(
+      `${BASE_URL}/menu/search/${event.target.value}`,
+      { withCredentials: true }
+    );
+    setFilteredItems(result.data);
   };
 
   const handleCategorySelect = (category) => {
@@ -99,20 +98,14 @@ const MenuPage = () => {
   return (
     <div>
       <Header />
-      <div className="min-h-screen pt-20 pb-16 bg-gray-200">
+      <div className="min-h-screen pt-28 pb-16 bg-gray-200">
         <div className="flex flex-col items-center justify-center min-h-screen px-4">
-          <h1 className="text-4xl mt-8 font-bold text-center mb-6 text-orange-500">
-            Our Menu
-          </h1>
-
           {/* Category Filter */}
           <CategoryFilter
             categories={categories}
             onSearch={handleSearch}
             onCategorySelect={handleCategorySelect}
-            searchQuery={searchQuery}
             setPage={setPage}
-            searchResults={searchResults}
             setFilteredItems={setFilteredItems}
           />
 

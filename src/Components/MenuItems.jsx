@@ -6,7 +6,7 @@ import Pagination from "@mui/material/Pagination";
 import { addItem } from "../utils/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const MenuItems = ({ items, fetchMenuData, offset, setOffset,setPage }) => {
+const MenuItems = ({ items, fetchMenuData, offset, setOffset, setPage }) => {
   const [quantities, setQuantities] = useState({});
   const [modalMessage, setModalMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -20,7 +20,7 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset,setPage }) => {
       setShowModal(true);
       return;
     }
-    console.log(quantities)
+    console.log(quantities);
 
     try {
       await axios.post(
@@ -42,9 +42,9 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset,setPage }) => {
   const handleCloseModal = () => {
     setShowModal(false);
   };
-  const itemCount = useSelector((store) =>{
-    return store.cart.totalItemCount
-  })
+  const itemCount = useSelector((store) => {
+    return store.cart.totalItemCount;
+  });
 
   const onIncreaseQuantity = (itemName) => {
     setQuantities((prevQuantities) => ({
@@ -59,7 +59,6 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset,setPage }) => {
       ...prevQuantities,
       [itemName]: Math.max((prevQuantities[itemName] || 1) - 1, 1),
     }));
-  
   };
 
   const handlePageChange = (value) => {
@@ -67,7 +66,6 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset,setPage }) => {
     setPage(value);
     console.log("Page changed to:", value);
   };
-
 
   useEffect(() => {
     handlePageChange(1);
@@ -77,7 +75,7 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset,setPage }) => {
     <div className="container mx-auto p-6 max-w-4xl lg:max-w-7xl">
       {items.map((item) => (
         <div
-          key={item.name}
+          key={item.item_id}
           className="flex flex-col md:flex-row items-center justify-between bg-white shadow-lg rounded-lg p-6 mb-6 hover:shadow-2xl transition-shadow duration-300"
         >
           {/* Image Section */}
