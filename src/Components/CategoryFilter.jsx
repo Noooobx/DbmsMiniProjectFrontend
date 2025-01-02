@@ -8,7 +8,7 @@ const CategoryFilter = ({ categories, onSearch, onCategorySelect }) => {
             type="text"
             onChange={onSearch}
             placeholder="Search for items..."
-            className="w-full max-w-lg px-4 py-2 md:py-3 rounded-full border border-gray-300 focus:outline-none focus:border-gray-300 transition duration-300 shadow-sm hover:shadow-md text-gray-700 placeholder-gray-400 bg-white"
+            className="w-full max-w-lg px-4 py-2 md:py-2 rounded-full border border-gray-300 focus:outline-none focus:border-gray-300 transition duration-300 shadow-sm hover:shadow-md text-gray-700 placeholder-gray-400 bg-white"
           />
         </div>
 

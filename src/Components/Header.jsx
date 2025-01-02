@@ -15,7 +15,6 @@ const Header = () => {
   const itemCount = useSelector((store) => {
     return store.cart.totalItemCount;
   });
-  console.log(itemCount);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);

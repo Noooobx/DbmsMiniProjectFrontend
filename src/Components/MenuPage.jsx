@@ -83,7 +83,6 @@ const MenuPage = () => {
   const searchInfo = useSelector((store) => {
     return store.menu;
   });
-  console.log(searchInfo);
   const handleSearch = async (event) => {
     if (event.target.value == "") {
       fetchMenuData();
@@ -97,8 +96,15 @@ const MenuPage = () => {
     debounceTimer = setTimeout(async () => {
       //before calling the api check if for the current input there is a value that is already stored in the store
       // if not then proceed with the api call and if not then fetch info from the store and update the filteredItems.
-      
-      if (searchInfo) {
+      const isSearchInfoInStore = searchInfo.some((data)=>{
+        if(data[event.target.value]){
+          return true;
+        }else{
+          return false;
+        }
+      });
+      console.log(isSearchInfoInStore)
+      if (!isSearchInfoInStore) {
         const result = await axios.get(
           `${BASE_URL}/menu/search/${event.target.value}`,
           { withCredentials: true }
@@ -109,7 +115,13 @@ const MenuPage = () => {
         };
         dispatch(addSearchInfo(obj));
       } else {
-        setFilteredItems(searchInfo);
+        const filteredSearchInfo = searchInfo.find((data) => {
+          return data[event.target.value]; 
+      });
+      
+        const ans =  Object.values(filteredSearchInfo);
+        console.log(ans[0])
+        setFilteredItems(ans[0]);
       }
     }, 300);
   };
