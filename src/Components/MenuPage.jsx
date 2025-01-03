@@ -69,6 +69,7 @@ const MenuPage = () => {
       console.log(error);
     }
   };
+  let debounceTimer;
 
   useEffect(() => {
     fetchMenuData();
@@ -78,50 +79,54 @@ const MenuPage = () => {
     });
   }, [page]);
 
+  // useEffect(()=>{
+  //   return () =>{
+  //     clearTimeout(debounceTimer);
+  //   }
+  // },[])
+
   // Handlers
-  let debounceTimer;
+
   const searchInfo = useSelector((store) => {
     return store.menu;
   });
-  const handleSearch = async (event) => {
-    if (event.target.value == "") {
-      fetchMenuData();
+  const handleSearch = async ({ target: { value } }) => {
+    if (value == "") {
+      setFilteredItems(menuItems);
       return;
     }
-    // Debouncing
-    // Clear the timer if the input to the api keeps changing.
     clearTimeout(debounceTimer);
 
-    // Timer to introduce delay.
     debounceTimer = setTimeout(async () => {
       //before calling the api check if for the current input there is a value that is already stored in the store
       // if not then proceed with the api call and if not then fetch info from the store and update the filteredItems.
-      const isSearchInfoInStore = searchInfo.some((data)=>{
-        if(data[event.target.value]){
+
+      // Checks if the store contains the serching input.
+      console.log(searchInfo);
+      const isSearchInfoInStore = searchInfo.some((data) => {
+        if (data[value]) {
           return true;
-        }else{
+        } else {
           return false;
         }
       });
-      console.log(isSearchInfoInStore)
+
+      console.log(isSearchInfoInStore);
+
       if (!isSearchInfoInStore) {
-        const result = await axios.get(
-          `${BASE_URL}/menu/search/${event.target.value}`,
-          { withCredentials: true }
-        );
+        const result = await axios.get(`${BASE_URL}/menu/search/${value}`, {
+          withCredentials: true,
+        });
         setFilteredItems(result.data);
         const obj = {
-          [event.target.value]: result.data,
+          [value]: result.data,
         };
         dispatch(addSearchInfo(obj));
       } else {
-        const filteredSearchInfo = searchInfo.find((data) => {
-          return data[event.target.value]; 
-      });
-      
-        const ans =  Object.values(filteredSearchInfo);
-        console.log(ans[0])
-        setFilteredItems(ans[0]);
+        const filteredSearchInfo = searchInfo[value];
+
+        const items = Object.values(filteredSearchInfo);
+        setFilteredItems(items[0]);
       }
     }, 300);
   };

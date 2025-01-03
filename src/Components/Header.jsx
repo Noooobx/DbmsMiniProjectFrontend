@@ -1,3 +1,4 @@
+// Header.js
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -5,6 +6,7 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addItem } from "../utils/cartSlice";
+import HamburgerMenu from "./HamburgerMenu";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -144,56 +146,11 @@ const Header = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      <div
-        className={`fixed top-0 left-0 h-screen w-64 bg-gray-900 transform ${
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out shadow-lg lg:hidden`}
-      >
-        <div className="flex justify-end p-4">
-          <button onClick={closeMobileMenu} className="text-white">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-
-        {/* Mobile Navigation Links */}
-        <nav className="flex flex-col space-y-6 text-center mt-8">
-          <a
-            href="/"
-            className="text-lg text-white hover:text-orange-400 transition"
-            onClick={closeMobileMenu}
-          >
-            Contact Us
-          </a>
-          <a
-            href="/about-us"
-            className="text-lg text-white hover:text-orange-400 transition"
-            onClick={closeMobileMenu}
-          >
-            About Us
-          </a>
-          <a
-            href="/menu"
-            className="text-lg text-white hover:text-orange-400 transition"
-            onClick={closeMobileMenu}
-          >
-            Menu
-          </a>
-        </nav>
-      </div>
+      {/* Mobile Menu Component */}
+      <HamburgerMenu
+        closeMobileMenu={closeMobileMenu}
+        isMobileMenuOpen={isMobileMenuOpen}
+      />
     </header>
   );
 };

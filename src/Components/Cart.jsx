@@ -47,11 +47,11 @@ const Cart = () => {
   const formattedTotalPrice = totalPrice.toFixed(2);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-800">
+    <div className="flex flex-col md:px-16 min-h-screen bg-gray-50 text-gray-800">
       
 
-      <main className="flex-grow mt-16 p-4">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Your Cart</h2>
+      <main className="flex-grow mt-20 p-4">
+        <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">Your Cart</h2>
 
         {loading ? (
           <div className="text-center text-gray-500">Loading cart items...</div>
@@ -113,10 +113,6 @@ const Cart = () => {
           </div>
         )}
       </main>
-
-      <footer className="py-4 bg-gray-900 text-center text-gray-300">
-        <p>&copy; 2024 RestaurantName. All rights reserved.</p>
-      </footer>
     </div>
   );
 };

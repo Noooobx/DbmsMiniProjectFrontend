@@ -71,7 +71,6 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset, setPage }) => {
     handlePageChange(1);
   }, []);
 
-  console.log(items)
 
   return (
     <div className="container mx-auto p-6 max-w-4xl lg:max-w-7xl">
