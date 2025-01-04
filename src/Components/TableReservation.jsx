@@ -1,8 +1,8 @@
-import  { useState } from "react";
-import axios from "axios"; 
+import { useState } from "react";
+import axios from "axios";
 import AvailableTableLists from "./AvailableTableLists";
 import { ThreeDots } from "react-loader-spinner";
-import { BASE_URL, LoginPageBG } from "../utils/constants"; 
+import { BASE_URL, LoginPageBG } from "../utils/constants";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
@@ -14,22 +14,27 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material"; // Import MUI components
+import { useNavigate } from "react-router-dom";
+import ReservationSuccessModal from "./modals/ReservationSuccessModal"; // Import the modal component
 
 const TableReservation = () => {
   const [name, setName] = useState("");
-  const [dateTime, setDateTime] = useState(dayjs()); 
+  const [dateTime, setDateTime] = useState(dayjs());
   const [people, setPeople] = useState(1);
-  const [tableType, setTableType] = useState(""); 
-  const [tableInfo, setTableInfo] = useState([]); 
-  const [loading, setLoading] = useState(false); 
+  const [tableType, setTableType] = useState("");
+  const [tableInfo, setTableInfo] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [openModal, setOpenModal] = useState(false); // State for modal visibility
+  const navigate = useNavigate();
 
-  const handleReserve = async (e) => {
+  const handleReserve = async (e, tablenumber) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        BASE_URL + "/reserve",
+        BASE_URL + "/reserve/table",
         {
+          tablenumber,
           name,
           date: dateTime.format("YYYY-MM-DD"),
           time: dateTime.format("HH:mm"),
@@ -38,7 +43,7 @@ const TableReservation = () => {
         { withCredentials: true }
       );
       console.log("Reservation successful!", response.data);
-      // Handle success (e.g., redirect or show a success message)
+      setOpenModal(true); // Open modal on successful reservation
     } catch (error) {
       console.log("Reservation failed.", error.response?.data?.message);
       setError(error.response?.data?.message || "Something went wrong!");
@@ -66,7 +71,7 @@ const TableReservation = () => {
         } finally {
           setLoading(false);
         }
-      }, 500); // 1000 ms delay (1 second)
+      }, 500); // 500 ms delay
     } catch (error) {
       console.error("Error:", error);
       setLoading(false);
@@ -190,10 +195,27 @@ const TableReservation = () => {
               />
             </div>
           ) : (
-            <AvailableTableLists filteredTables={tableInfo} loading={loading} />
+            <AvailableTableLists
+              filteredTables={tableInfo}
+              loading={loading}
+              name={name}
+              dateTime={dateTime}
+              people={people}
+              tableType={tableType}
+              handleReserve={handleReserve}
+            />
           )}
         </div>
       </div>
+
+      {/* Reservation Success Modal */}
+      <ReservationSuccessModal
+        open={openModal}
+        onClose={() => {
+          setOpenModal(false);
+          navigate("/reservations"); // Navigate to /reservations when modal is closed
+        }}
+      />
     </div>
   );
 };

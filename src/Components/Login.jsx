@@ -42,7 +42,7 @@ const Login = () => {
   return (
     <div>
       <div
-        className="flex items-center justify-center min-h-screen bg-cover bg-center"
+        className="flex items-center px-8 justify-center min-h-screen bg-cover bg-center"
         style={{
           backgroundImage: `url(${LoginPageBG})`,
         }}

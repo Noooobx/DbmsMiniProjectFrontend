@@ -25,7 +25,7 @@ const HamburgerMenu = ({ closeMobileMenu, isMobileMenuOpen }) => {
           Contact Us
         </a>
         <a
-          href="/about-us"
+          href="/about"
           className="text-lg text-white hover:text-orange-400 transition duration-200"
           onClick={closeMobileMenu}
         >

@@ -1,11 +1,27 @@
 import React from "react";
+import dayjs from "dayjs"; // Import the dayjs library
 import { Bars } from "react-loader-spinner"; // Import a loading spinner component
 import EventSeatIcon from "@mui/icons-material/EventSeat"; // Icon for seating capacity
 import TableRestaurantIcon from "@mui/icons-material/TableRestaurant"; // Icon for table type
 import SearchIcon from "@mui/icons-material/Search"; // Icon for searching tables
 import EventAvailableIcon from "@mui/icons-material/EventAvailable"; // Icon for date and time
 
-const AvailableTableLists = ({ filteredTables, loading }) => {
+const AvailableTableLists = ({ filteredTables, loading, name, dateTime, people, tableType, handleReserve }) => {
+
+  const handleReservation = (table_id) => {
+    const formattedDate = dateTime.format("YYYY-MM-DD");
+    const formattedTime = dateTime.format("HH:mm");
+  
+    console.log("Handling Reservation for Table ID:", table_id);
+    console.log("Name:", name);
+    console.log("Date:", formattedDate);
+    console.log("Time:", formattedTime);
+    console.log("Number of People:", people);
+    handleReserve(event,table_id);
+
+
+  };
+  
   console.log(filteredTables);
 
   // Show loading spinner when data is being fetched or filtered
@@ -49,7 +65,7 @@ const AvailableTableLists = ({ filteredTables, loading }) => {
 
             {/* Reserve Button */}
             <button
-              onClick={() => alert(`Reserving Table ${table.table_id}`)} // Just a simple alert for now
+              onClick={(()=>{handleReservation(table.table_id)})} 
               className="mt-4 w-full p-2 text-sm font-semibold text-white bg-gradient-to-r from-yellow-400 to-orange-500 rounded-md shadow-lg hover:bg-gradient-to-l transition duration-300 transform hover:scale-105"
             >
               Reserve Table

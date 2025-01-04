@@ -15,6 +15,7 @@ import Profile from "./Components/Profile";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Reservations from "./Components/Reservations";
+import About from "./Components/About";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/reservations" element={<Reservations />} />
+            <Route path="/about" element={<About />} />
           </Routes>
           <Footer />
         </div>

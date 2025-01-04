@@ -58,7 +58,7 @@ const Header = () => {
             Contact Us
           </a>
           <a
-            href="/about-us"
+            href="/about"
             className="text-lg text-white hover:text-orange-400 transition"
           >
             About Us
