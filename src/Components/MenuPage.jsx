@@ -17,9 +17,7 @@ const MenuPage = () => {
   const [page, setPage] = useState(0);
 
   const dispatch = useDispatch();
-  const pageContent = useSelector((store) => {
-    return store.page;
-  });
+  const pageContent = useSelector((store) => store.page);
 
   // Fetch menu data
   const fetchMenuData = async () => {
@@ -27,25 +25,25 @@ const MenuPage = () => {
       // If there exists data for the specific page
       if (!pageContent[page]) {
         const result = await axios.get(
-          `http://localhost:3004/menu/view/${offset}`,
-          {
-            withCredentials: true,
-          }
+          `${BASE_URL}/menu/view/${offset}`,
+          { withCredentials: true }
         );
         setMenuItems(result.data);
         setFilteredItems(result.data);
 
-        // Check if page is not zero whhich is the initial value of page.
+        // Check if page is not zero which is the initial value of page.
         if (page !== 0) {
           const obj = {
             [page]: result.data,
           };
           dispatch(addItem(obj));
         }
+
         const initialQuantities = {};
         result.data.forEach((item) => {
           initialQuantities[item.name] = 1;
         });
+
         const uniqueCategories = [
           ...new Set(result.data.map((item) => item.category)),
         ];
@@ -69,6 +67,7 @@ const MenuPage = () => {
       console.log(error);
     }
   };
+
   let debounceTimer;
 
   useEffect(() => {
@@ -79,52 +78,31 @@ const MenuPage = () => {
     });
   }, [page]);
 
-  // useEffect(()=>{
-  //   return () =>{
-  //     clearTimeout(debounceTimer);
-  //   }
-  // },[])
+  const searchInfo = useSelector((store) => store.menu);
 
-  // Handlers
-
-  const searchInfo = useSelector((store) => {
-    return store.menu;
-  });
   const handleSearch = async ({ target: { value } }) => {
-    if (value == "") {
+    if (value === "") {
       setFilteredItems(menuItems);
       return;
     }
     clearTimeout(debounceTimer);
 
     debounceTimer = setTimeout(async () => {
-      //before calling the api check if for the current input there is a value that is already stored in the store
-      // if not then proceed with the api call and if not then fetch info from the store and update the filteredItems.
-
-      // Checks if the store contains the serching input.
-      console.log(searchInfo);
-      const isSearchInfoInStore = searchInfo.some((data) => {
-        if (data[value]) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-
-      console.log(isSearchInfoInStore);
+      // Before calling the API, check if data for the current input exists in the store
+      const isSearchInfoInStore = searchInfo.some((data) => data[value]);
 
       if (!isSearchInfoInStore) {
         const result = await axios.get(`${BASE_URL}/menu/search/${value}`, {
           withCredentials: true,
         });
         setFilteredItems(result.data);
+
         const obj = {
           [value]: result.data,
         };
         dispatch(addSearchInfo(obj));
       } else {
         const filteredSearchInfo = searchInfo[value];
-
         const items = Object.values(filteredSearchInfo);
         setFilteredItems(items[0]);
       }

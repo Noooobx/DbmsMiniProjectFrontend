@@ -5,15 +5,18 @@ import CartSuccesModal from "./modals/CartSuccesModal";
 import Pagination from "@mui/material/Pagination";
 import { addItem } from "../utils/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { BASE_URL } from "../utils/constants";
 
 const MenuItems = ({ items, fetchMenuData, offset, setOffset, setPage }) => {
   const [quantities, setQuantities] = useState({});
   const [modalMessage, setModalMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
+
   const onAddToCart = async (item) => {
     const quantity = quantities[item.name] || 1;
     const userToken = Cookies.get("token");
+    console.log(userToken);
 
     if (!userToken) {
       setModalMessage("You need to be logged in to add items to the cart.");
@@ -24,7 +27,7 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset, setPage }) => {
 
     try {
       await axios.post(
-        "http://localhost:3004/cart/add",
+        `${BASE_URL}/cart/add`,
         {
           name: item.name,
           quantity: quantity,
@@ -42,9 +45,8 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset, setPage }) => {
   const handleCloseModal = () => {
     setShowModal(false);
   };
-  const itemCount = useSelector((store) => {
-    return store.cart.totalItemCount;
-  });
+
+  const itemCount = useSelector((store) => store.cart.totalItemCount);
 
   const onIncreaseQuantity = (itemName) => {
     setQuantities((prevQuantities) => ({
@@ -70,7 +72,6 @@ const MenuItems = ({ items, fetchMenuData, offset, setOffset, setPage }) => {
   useEffect(() => {
     handlePageChange(1);
   }, []);
-
 
   return (
     <div className="container mx-auto p-6 max-w-4xl lg:max-w-7xl">

@@ -11,7 +11,7 @@ const Cart = () => {
 
   const fetchCartItems = async () => {
     try {
-      const response = await axios.get('http://localhost:3004/cart/view', { withCredentials: true });
+      const response = await axios.get(`${BASE_URL}/cart/view`, { withCredentials: true });
       setCartItems(response.data);
     } catch (err) {
       console.error("Error fetching cart items:", err);
@@ -27,14 +27,13 @@ const Cart = () => {
 
   const handleRemoveItem = async (name) => {
     console.log(`Removing item: ${name}`);
-    await axios.post(BASE_URL + "/cart/delete", { name }, { withCredentials: true });
+    await axios.post(`${BASE_URL}/cart/delete`, { name }, { withCredentials: true });
     fetchCartItems();
   };
 
   const handleClearCart = async () => {
     console.log("Clearing all items from cart");
-    // Add logic here to clear all items from the cart
-    await axios.post(BASE_URL + "/cart/clear", {}, { withCredentials: true });
+    await axios.post(`${BASE_URL}/cart/clear`, {}, { withCredentials: true });
     fetchCartItems();
   };
 
@@ -48,8 +47,6 @@ const Cart = () => {
 
   return (
     <div className="flex flex-col md:px-16 min-h-screen bg-gray-50 text-gray-800">
-      
-
       <main className="flex-grow mt-20 p-4">
         <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">Your Cart</h2>
 

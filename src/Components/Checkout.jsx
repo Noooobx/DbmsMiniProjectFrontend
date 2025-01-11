@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "../utils/constants";
 
 const Checkout = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -13,7 +14,7 @@ const Checkout = () => {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await axios.get("http://localhost:3004/cart/view", {
+        const response = await axios.get(`${BASE_URL}/cart/view`, {
           withCredentials: true,
         });
         setCartItems(response.data);
@@ -27,7 +28,7 @@ const Checkout = () => {
   useEffect(() => {
     const fetchAllReservations = async () => {
       try {
-        const response = await axios.get("http://localhost:3004/reservations", {
+        const response = await axios.get(`${BASE_URL}/reservations`, {
           withCredentials: true,
         });
         setReservedTables(response.data);
@@ -53,13 +54,13 @@ const Checkout = () => {
           quantity: item.quantity,
           table_number: selectedTable,
         };
-        await axios.post("http://localhost:3004/order/place", orderData, {
+        await axios.post(`${BASE_URL}/order/place`, orderData, {
           withCredentials: true,
         });
       }
       navigate("/Orders");
     } catch (error) {
-      console.log(error)
+      console.log(error);
       alert("Failed to place order. Item unavailable in the menu. Please try again.");
     }
   };
@@ -85,7 +86,9 @@ const Checkout = () => {
             <ul className="mb-4">
               {cartItems.map((item) => (
                 <li key={item.id} className="flex justify-between border-b py-2">
-                  <span>{item.name} - Quantity: {item.quantity}</span>
+                  <span>
+                    {item.name} - Quantity: {item.quantity}
+                  </span>
                   <span>${parseFloat(item.price).toFixed(2)}</span>
                 </li>
               ))}
@@ -100,9 +103,9 @@ const Checkout = () => {
               value={selectedTable}
               onChange={(e) => {
                 const value = e.target.value;
-                const numberPart = value.match(/\d+/)?.[0]; // Extract the first numeric part
-                setSelectedTable(numberPart || ""); // Fallback to an empty string if no number is found
-              }}              
+                const numberPart = value.match(/\d+/)?.[0];
+                setSelectedTable(numberPart || "");
+              }}
             >
               <option value="">-- Select a Table --</option>
               {reservedTables.map((table) => (

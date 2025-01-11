@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import CancelModal from "./modals/CancelModal";
 import SuccesModal from "./modals/SuccesModal";
+import { BASE_URL } from "../utils/constants";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -12,12 +13,9 @@ const Orders = () => {
   // Fetch orders data
   const fetchOrders = async () => {
     try {
-      const ordersResponse = await axios.get(
-        "http://localhost:3004/order/view",
-        {
-          withCredentials: true,
-        }
-      );
+      const ordersResponse = await axios.get(`${BASE_URL}/order/view`, {
+        withCredentials: true,
+      });
       const groupedResults = ordersResponse.data.result.reduce((acc, order) => {
         if (!acc[order.table_number]) {
           acc[order.table_number] = [];
@@ -27,7 +25,7 @@ const Orders = () => {
       }, {});
       setOrders(groupedResults);
     } catch (err) {
-      console.error(err); 
+      console.error(err);
     }
   };
 
@@ -35,7 +33,7 @@ const Orders = () => {
   const cancelOrder = async () => {
     try {
       await axios.post(
-        `http://localhost:3004/order/cancel/${selectedOrder.item_name}`,
+        `${BASE_URL}/order/cancel/${selectedOrder.item_name}`,
         {},
         { withCredentials: true }
       );
@@ -137,12 +135,10 @@ const Orders = () => {
       </div>
 
       {showCancelModal && (
-        <CancelModal setShowCancelModal={setShowCancelModal} cancelOrder = {cancelOrder}/>
+        <CancelModal setShowCancelModal={setShowCancelModal} cancelOrder={cancelOrder} />
       )}
 
-      {showSuccessModal && (
-        <SuccesModal setShowSuccessModal={setShowSuccessModal}/>
-      )}
+      {showSuccessModal && <SuccesModal setShowSuccessModal={setShowSuccessModal} />}
     </div>
   );
 };

@@ -35,8 +35,8 @@ const Login = () => {
   };
 
   const handleGoogleSignIn = () => {
-    console.log("Google Sign-In initiated");
-    // Add your Google Sign-In logic here
+    window.location.href = `${BASE_URL}/auth/google`;
+    navigate("/dashboard");
   };
 
   return (
