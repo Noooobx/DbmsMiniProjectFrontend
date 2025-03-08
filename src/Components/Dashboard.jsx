@@ -3,13 +3,11 @@ const Dashboard = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-white">
+      <div className="flex  flex-col items-center justify-center min-h-screen p-6 bg-white">
         <h1 className="text-4xl font-bold text-center text-white mb-8">
           Savor Your Experience!
         </h1>
-        <p className="text-lg text-center text-white mb-6">
-          What would you like to do today?
-        </p>
+       
         <div className="space-y-4">
           <button
             onClick={() => navigate("/reserve/table")}

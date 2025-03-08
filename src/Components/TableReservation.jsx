@@ -80,7 +80,7 @@ const TableReservation = () => {
 
   return (
     <div
-      className="flex justify-evenly items-center px-4 w-full min-h-screen bg-cover bg-center"
+      className="flex justify-evenly items-center py-16 px-4 w-full min-h-screen bg-cover bg-center"
       style={{
         backgroundImage: `url(${LoginPageBG})`,
       }}
